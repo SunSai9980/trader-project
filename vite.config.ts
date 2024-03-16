@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import type { ConfigEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
 import { resolve } from "path";
@@ -9,7 +9,9 @@ import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 
 // https://vitejs.dev/config/
 export default defineConfig((configEnv: ConfigEnv) => {
-  console.log(configEnv);
+  const env = loadEnv(configEnv.mode, process.cwd());
+  console.log(env);
+  console.log(env.VITE_PROXY_URL);
   return {
     base: "./",
     plugins: [
@@ -43,7 +45,7 @@ export default defineConfig((configEnv: ConfigEnv) => {
       host: "0.0.0.0",
       proxy: {
         "/api": {
-          target: "http://jsonplaceholder.typicode.com",
+          target: env.VITE_PROXY_URL,
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ""),
         },

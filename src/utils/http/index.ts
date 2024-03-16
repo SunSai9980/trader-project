@@ -1,52 +1,85 @@
-import Axios, { type AxiosInstance, type AxiosRequestConfig } from "axios";
-import { ElMessage } from "element-plus";
+import axios from "axios";
+import type { AxiosInstance, AxiosRequestConfig } from "axios";
+import type { Result, ResultData } from "./types";
 
 const defaultConfig: AxiosRequestConfig = {
   baseURL: import.meta.env.VITE_API_URL,
   timeout: 10000,
   headers: {
-    Accept: "application/json, text/plain, */*",
-    "Content-Type": "application/json",
+    Accept: "application/json",
   },
 };
-interface Response<T = unknown> {
-  data: T;
-  code: number;
-  message: string;
-}
-
 class Http {
-  private static axiosInstance: AxiosInstance = Axios.create(defaultConfig);
-  constructor() {
-    this.httpInterceptorsRequest();
-    this.httpInterceptorsResponse();
+  private instance: AxiosInstance;
+
+  constructor(config: AxiosRequestConfig = defaultConfig) {
+    this.instance = axios.create(config);
+    this.setupInterceptor();
   }
-  private httpInterceptorsRequest() {
-    Http.axiosInstance.interceptors.request.use((config) => {
-      const token = localStorage.getItem("access_token");
-      if (token) config.url = `${config.url}?token=${token}`;
-      return config;
-    });
-  }
-  private httpInterceptorsResponse() {
-    Http.axiosInstance.interceptors.response.use(
-      (response) => {
-        if (response.status >= 400) {
-          return Promise.reject(response);
+
+  private setupInterceptor(): void {
+    // 添加所有实例都有的请求拦截器
+    this.instance.interceptors.request.use(
+      (config) => {
+        const token = localStorage.getItem("token");
+        if (token) {
+          config.url = config.url + "?token=" + token;
         }
-        return response.data;
+        return config;
       },
-      (err) => {
-        ElMessage({
-          type: "error",
-          message: err,
-        });
+      (error) => {
+        return error;
+      }
+    );
+
+    // 添加所有实例都有的响应拦截器
+    this.instance.interceptors.response.use(
+      (response) => {
+        return response;
+      },
+      (error) => {
+        return error;
       }
     );
   }
-  post(url: string, data: unknown, config = {}) {
-    return Http.axiosInstance.post(url, data, config);
+
+  request<T = any>(config: AxiosRequestConfig): Promise<ResultData<T>> {
+    return new Promise((resolve, reject) => {
+      this.instance
+        .request<any, Result<ResultData<T>>>(config)
+        .then((response) => {
+          const { code, message, data } = response.data;
+          if (code >= 400) {
+            ElMessage({ message: (data as string) || message, type: "error" });
+            reject(response.data);
+          }
+          resolve(response.data);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
+
+  get<T = any>(config: AxiosRequestConfig): Promise<ResultData<T>> {
+    return this.request({ ...config, method: "GET" });
+  }
+
+  post<T = any>(config: AxiosRequestConfig): Promise<ResultData<T>> {
+    return this.request({ ...config, method: "POST" });
+  }
+
+  delete<T = any>(config: AxiosRequestConfig): Promise<ResultData<T>> {
+    return this.request({ ...config, method: "DELETE" });
+  }
+
+  patch<T = any>(config: AxiosRequestConfig): Promise<ResultData<T>> {
+    return this.request({ ...config, method: "PATCH" });
+  }
+
+  put<T = any>(config: AxiosRequestConfig): Promise<ResultData<T>> {
+    return this.request({ ...config, method: "PUT" });
   }
 }
 
-export default Http;
+export default new Http();

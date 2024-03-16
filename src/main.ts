@@ -8,4 +8,4 @@ import "virtual:uno.css";
 import "@/assets/style/reset.scss";
 
 const pinia = createPinia().use(piniaPluginPersistedstate);
-createApp(App).use(router).use(pinia).mount("#app");
+createApp(App).use(pinia).use(router).mount("#app");

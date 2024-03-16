@@ -1,27 +1,23 @@
 import { defineStore } from "pinia";
+import type { User } from "@/api/user/types";
 
-interface User {
-  id: number;
-  name: string;
+interface State {
+  user: User;
 }
-type Key = keyof User;
-
-// useStore 可以是 useUser、useCart 之类的任何东西
-// 第一个参数是应用程序中 store 的唯一 id
 export const useUserInfo = defineStore("userInfo", {
   persist: true,
   // other options...
-  state() {
+  state(): State {
     return {
-      id: 1,
-      name: "张三",
+      user: {
+        mobile: "",
+      },
     };
   },
   getters: {},
   actions: {
-    initUserInfo(user: User) {
-      this.$state = user;
+    initUserInfo(data: User) {
+      this.user = data;
     },
-    updateUserInfo(key: Key, value: unknown) {},
   },
 });
