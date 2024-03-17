@@ -12,3 +12,7 @@ export const apiSendCode = (data: SendCode) => {
 export const apiOnlyValidCode = (data: ValidCode) => {
   return http.post({ url: "/merchant/user/onlyValidCode", data });
 };
+
+export const apiUpdateUser = (data: User) => {
+  return http.post({ url: "/merchant/user/update", data });
+};

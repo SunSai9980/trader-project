@@ -1,35 +1,22 @@
 <template>
-  <el-steps style="max-width: 600px" :active="active" align-center>
-    <el-step title="知晓协议">
-      <template #icon>
-        <div class="one" :class="{ green: active === 1 }"></div>
-      </template>
-    </el-step>
-    <el-step title="Step 2" />
-    <el-step title="Step 3" />
-    <el-step title="Step 4" />
+  <el-steps
+    class="w-full pb-10 pt-5 px-10 border-y-[1px] steps"
+    :active="active"
+    finish-status="success"
+  >
+    <el-step title="知晓协议"> </el-step>
+    <el-step title="申报材料" />
+    <el-step title="核验资料" />
+    <el-step title="完成" />
   </el-steps>
-
-  <el-button style="margin-top: 12px" @click="next">Next step</el-button>
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
-
-const active = ref(0);
-
-const next = () => {
-  if (active.value++ > 2) active.value = 0;
-};
+import { defineProps } from "vue";
+withDefaults(defineProps<{ active: number }>(), { active: 0 });
 </script>
 <style scoped lang="scss">
-.one {
-  width: 6px;
-  height: 6px;
-  background-color: gray;
-  border-radius: 50%;
-}
-.green {
-  background-color: red;
+.steps {
+  border-color: rgb(160, 160, 160);
 }
 </style>

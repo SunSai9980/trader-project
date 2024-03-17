@@ -10,7 +10,9 @@ export const useUserInfo = defineStore("userInfo", {
   state(): State {
     return {
       user: {
-        mobile: "",
+        mobile: "19912345678",
+        id: 10,
+        commitment: 1,
       },
     };
   },
@@ -18,6 +20,9 @@ export const useUserInfo = defineStore("userInfo", {
   actions: {
     initUserInfo(data: User) {
       this.user = data;
+    },
+    setUserInfo<K extends keyof User>(key: K, value: User[K]) {
+      this.user[key] = value;
     },
   },
 });

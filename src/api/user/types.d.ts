@@ -17,11 +17,11 @@ export interface User {
   deleted?: boolean;
   email?: string;
   enterpriseName?: string;
-  id?: number;
+  id: number;
   idCardFront?: string;
   idCardOpposite?: string;
   materialApplyState?: number;
-  mobile: string;
+  mobile?: string;
   modifyTime?: Date;
   name?: string;
   operatePermit?: string;
