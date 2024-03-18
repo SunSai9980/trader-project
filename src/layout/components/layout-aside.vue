@@ -1,11 +1,15 @@
 <template>
   <el-scrollbar h-full>
-    <el-menu default-active="1" @open="handleOpen" @close="handleClose">
+    <!--  -->
+    <el-menu
+      default-active="1"
+      @open="handleOpen"
+      @close="handleClose"
+      background-color="#409EFF"
+      text-color="black"
+      active-text-color="#fff"
+    >
       <el-menu-item index="1">
-        <el-icon><House /></el-icon>
-        <template #title>商户入驻</template>
-      </el-menu-item>
-      <el-menu-item index="2">
         <el-icon><House /></el-icon>
         <template #title>商户入驻</template>
       </el-menu-item>
@@ -17,7 +21,7 @@
 import { House } from "@element-plus/icons-vue";
 
 const handleOpen = (key: string, keyPath: string[]) => {
-  console.log("open", key, keyPath);
+  // console.log("open", key, keyPath);
 };
 const handleClose = (key: string, keyPath: string[]) => {
   console.log("close", key, keyPath);

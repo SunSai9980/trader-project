@@ -5,7 +5,7 @@
         <layoutHeader />
       </el-header>
       <el-container class="aside">
-        <el-aside width="200px" h-full class="bg-blue-950">
+        <el-aside width="200px" h-full class="bg-#001529">
           <layout-aside />
         </el-aside>
         <el-main class="main p-[20px] !pb-0">

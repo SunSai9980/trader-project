@@ -1,28 +1,40 @@
 import { defineStore } from "pinia";
 import type { User } from "@/api/user/types";
+import { MaterialApplyState, State } from "@/enums";
 
-interface State {
-  user: User;
-}
 export const useUserInfo = defineStore("userInfo", {
   persist: true,
   // other options...
-  state(): State {
+  state(): User {
     return {
-      user: {
-        mobile: "19912345678",
-        id: 10,
-        commitment: 1,
-      },
+      mobile: "",
+      id: 0,
+      state: State.know,
+      materialApplyState: MaterialApplyState.unfinished,
+      businessLicense: undefined,
+      commitment: undefined,
+      createTime: undefined,
+      creditCode: undefined,
+      deleted: undefined,
+      email: undefined,
+      enterpriseName: undefined,
+      idCardFront: undefined,
+      idCardOpposite: undefined,
+      modifyTime: undefined,
+      name: undefined,
+      operatePermit: undefined,
+      password: undefined,
+      recommendUser: undefined,
+      reason: undefined,
     };
   },
   getters: {},
   actions: {
     initUserInfo(data: User) {
-      this.user = data;
+      this.$state = data;
     },
-    setUserInfo<K extends keyof User>(key: K, value: User[K]) {
-      this.user[key] = value;
-    },
+    // setUserInfo<K extends keyof User>(key: K, value: User[K]) {
+    //   this.$[key] = value;
+    // },
   },
 });

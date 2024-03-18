@@ -4,8 +4,6 @@
     <entry-agreement :active="active" />
     <component :is="statusComponent" @stepNext="handleNext" />
   </div>
-
-  <!-- <entry-informed /> -->
 </template>
 
 <script setup lang="ts">
@@ -13,25 +11,27 @@ import EntryAgreement from "./components/entry-agreement.vue";
 import EntryMaterials from "./components/entry-materials.vue";
 import EntryInformed from "./components/entry-informed.vue";
 import EntryResult from "./components/entry-result.vue";
-import { Commitment, State } from "@/enums";
+import { MaterialApplyState, State } from "@/enums";
 import { useUserInfo } from "@/store";
 import { ref, computed, onMounted } from "vue";
+import { apiLogin } from "@/api/user";
 
-const { user, setUserInfo } = useUserInfo();
+let user = useUserInfo();
 const loading = ref(false);
 const statusComponent = computed(() => {
+  console.log("statusComponent", user.state);
   let component;
-  switch (user.commitment) {
-    case Commitment.know:
+  switch (user.state) {
+    case State.know:
       component = EntryInformed;
       break;
-    case Commitment.declare:
-    case Commitment.successes:
-    case Commitment.error:
+    case State.declare:
       component = EntryMaterials;
       break;
-    case Commitment.ShortlistingError:
-    case Commitment.ShortlistingSuccess:
+    case State.successes:
+    case State.error:
+    case State.ShortlistingError:
+    case State.ShortlistingSuccess:
       component = EntryResult;
       break;
     default:
@@ -42,31 +42,35 @@ const statusComponent = computed(() => {
 });
 
 const active = ref<number>(0);
-
-const handleNext = (commitment: Commitment, state: State) => {
-  console.log("next");
-  if (active.value++ > 3) active.value = 0;
-  setUserInfo("commitment", commitment);
-  setUserInfo("state", state);
-};
 const initActive = () => {
-  switch (user.commitment) {
-    case Commitment.know:
+  switch (user.state) {
+    case State.know:
       return 0;
-    case Commitment.declare:
-      return user.state!;
-    case Commitment.successes:
-    case Commitment.error:
-      return 2;
-    case Commitment.ShortlistingError:
-    case Commitment.ShortlistingSuccess:
+    case State.declare:
+      return user.materialApplyState!;
+    case State.successes:
+    case State.error:
       return 3;
+    case State.ShortlistingError:
+    case State.ShortlistingSuccess:
+      return 4;
     default:
       return 0;
   }
 };
 
-onMounted(() => {
+const handleNext = (state: State, materialApplyState: MaterialApplyState) => {
+  user.materialApplyState = materialApplyState;
+  user.state = state;
+  active.value = initActive();
+};
+
+onMounted(async () => {
+  const { data } = await apiLogin(user.mobile!);
+  user.$state = data;
+  console.log(user);
+  console.log(user.name);
+  // user.state = 3;
   active.value = initActive();
   loading.value = true;
 });

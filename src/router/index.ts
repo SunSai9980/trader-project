@@ -29,9 +29,9 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const userInfo = useUserInfo();
+  const user = useUserInfo();
   if (to.path !== EnumPath.LOGIN) {
-    if (!userInfo.user.id) {
+    if (!user.id) {
       next(EnumPath.LOGIN);
     }
   }

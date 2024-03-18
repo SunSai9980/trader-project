@@ -14,5 +14,5 @@ export const apiOnlyValidCode = (data: ValidCode) => {
 };
 
 export const apiUpdateUser = (data: User) => {
-  return http.post({ url: "/merchant/user/update", data });
+  return http.post<User>({ url: "/merchant/user/update", data });
 };

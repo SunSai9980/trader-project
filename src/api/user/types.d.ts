@@ -1,4 +1,4 @@
-import { State, Commitment } from "@/enums";
+import { State, MaterialApplyState } from "@/enums";
 
 export interface ValidCode {
   code: string;
@@ -11,7 +11,7 @@ export interface SendCode {
 
 export interface User {
   businessLicense?: string;
-  commitment?: Commitment;
+  commitment?: string;
   createTime?: Date;
   creditCode?: string;
   deleted?: boolean;
@@ -20,7 +20,7 @@ export interface User {
   id: number;
   idCardFront?: string;
   idCardOpposite?: string;
-  materialApplyState?: number;
+  materialApplyState?: MaterialApplyState;
   mobile?: string;
   modifyTime?: Date;
   name?: string;
@@ -28,4 +28,5 @@ export interface User {
   password?: string;
   recommendUser?: string;
   state?: State;
+  reason?: string;
 }

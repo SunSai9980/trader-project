@@ -1,4 +1,4 @@
-export enum Commitment {
+export enum State {
   know = 1,
   declare,
   successes,
@@ -7,7 +7,7 @@ export enum Commitment {
   ShortlistingError,
 }
 
-export enum State {
+export enum MaterialApplyState {
   unfinished = 1,
   fulfil,
 }

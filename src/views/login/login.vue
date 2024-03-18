@@ -57,7 +57,7 @@ import LoginNav from "./components/login-nav.vue";
 import LoginMain from "./components/login-main.vue";
 import { ref, reactive } from "vue";
 import type { FormRules, FormInstance } from "element-plus";
-import { regPhone } from "@/utils";
+import { validatorMobile, regPhone } from "@/utils";
 import { Message, Iphone } from "@element-plus/icons-vue";
 import { apiLogin, apiSendCode, apiOnlyValidCode } from "@/api/user";
 import { useUserInfo } from "@/store";
@@ -77,18 +77,11 @@ const isSending = ref<boolean>(false);
 
 const formTag = ref<FormInstance>();
 
-const validateMobile = (rule: any, value: any, callback: any) => {
-  if (regPhone.test(value)) {
-    callback();
-  } else {
-    callback(new Error("手机号码格式错误"));
-  }
-};
 const rules = reactive<FormRules<LoginForm>>({
   mobile: [
     { required: true, message: "请输入手机号", trigger: "blur" },
     {
-      validator: validateMobile,
+      validator: validatorMobile,
       trigger: "blur",
     },
   ],
@@ -111,7 +104,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
           code: loginForm.code,
         });
         const { data } = await apiLogin(loginForm.mobile);
-        user.initUserInfo(data);
+        user.$state = data;
         loading.value = false;
         dialogVisible.value = false;
         router.replace("/");

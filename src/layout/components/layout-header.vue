@@ -15,7 +15,7 @@
 <script setup lang="ts">
 import { useUserInfo } from "@/store";
 
-const { user } = useUserInfo();
+const user = useUserInfo();
 </script>
 
 <style scoped lang="scss"></style>
