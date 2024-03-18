@@ -444,15 +444,19 @@ const beforeUploadPdf = (file: UploadFile) => {
 };
 const handleIdCardFrontSuccess: UploadProps["onSuccess"] = (response) => {
   materialsForm.idCardFront = response.message;
+  hideUploadEdit1.value = true;
 };
 const handleIdCardOppositeSuccess: UploadProps["onSuccess"] = (response) => {
   materialsForm.idCardOpposite = response.message;
+  hideUploadEdit2.value = true;
 };
 const handleCommitmentSuccess: UploadProps["onSuccess"] = (response) => {
   materialsForm.commitment = response.message;
+  hideUploadEdit3.value = true;
 };
 const handleOperatePermitSuccess: UploadProps["onSuccess"] = (response) => {
   materialsForm.operatePermit = response.message;
+  hideUploadEdit4.value = true;
 };
 const handleBusinessLicenseSuccess: UploadProps["onSuccess"] = (response) => {
   materialsForm.businessLicense = response.message;
