@@ -41,6 +41,8 @@
               :on-success="handleIdCardFrontSuccess"
               list-type="picture-card"
               :class="{ hid: hideUploadEdit1 }"
+              :on-remove="handleRemove1"
+              :on-change="handleChange1"
             >
               <div class="flex flex-col justify-center items-center">
                 <el-icon><Plus /></el-icon>
@@ -61,6 +63,8 @@
               list-type="picture-card"
               :on-preview="handlePictureCardPreview"
               :class="{ hid: hideUploadEdit2 }"
+              :on-remove="handleRemove2"
+              :on-change="handleChange2"
             >
               <div class="flex flex-col justify-center items-center">
                 <el-icon><Plus /></el-icon>
@@ -120,6 +124,8 @@
           list-type="picture-card"
           :class="{ hid: hideUploadEdit3 }"
           :on-preview="handlePictureCardPreview"
+          :on-remove="handleRemove3"
+          :on-change="handleChange3"
         >
           <el-icon><Plus /></el-icon>
         </el-upload>
@@ -176,6 +182,8 @@
           list-type="picture-card"
           :class="{ hid: hideUploadEdit4 }"
           :on-preview="handlePictureCardPreview"
+          :on-remove="handleRemove4"
+          :on-change="handleChange4"
         >
           <el-icon><Plus /></el-icon>
         </el-upload>
@@ -465,6 +473,30 @@ const handlePictureCardPreview = (file: UploadFile) => {
   dialogImageUrl.value = file.url!;
   dialogVisible.value = true;
 };
+const handleRemove1: UploadProps["onRemove"] = (uploadFile, uploadFiles) => {
+  hideUploadEdit1.value = uploadFiles.length > 0;
+};
+const handleRemove2: UploadProps["onRemove"] = (uploadFile, uploadFiles) => {
+  hideUploadEdit2.value = uploadFiles.length > 0;
+};
+const handleRemove3: UploadProps["onRemove"] = (uploadFile, uploadFiles) => {
+  hideUploadEdit3.value = uploadFiles.length > 0;
+};
+const handleRemove4: UploadProps["onRemove"] = (uploadFile, uploadFiles) => {
+  hideUploadEdit4.value = uploadFiles.length > 0;
+};
+const handleChange1: UploadProps["onChange"] = (uploadFile, uploadFiles) => {
+  hideUploadEdit1.value = uploadFiles.length > 0;
+};
+const handleChange2: UploadProps["onChange"] = (uploadFile, uploadFiles) => {
+  hideUploadEdit2.value = uploadFiles.length > 0;
+};
+const handleChange3: UploadProps["onChange"] = (uploadFile, uploadFiles) => {
+  hideUploadEdit3.value = uploadFiles.length > 0;
+};
+const handleChange4: UploadProps["onChange"] = (uploadFile, uploadFiles) => {
+  hideUploadEdit4.value = uploadFiles.length > 0;
+};
 const handleSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate(async (valid, fields) => {
@@ -497,6 +529,7 @@ const handleSubmit = async (formEl: FormInstance | undefined) => {
 
 onMounted(() => {
   if (user.idCardFront) {
+    hideUploadEdit1.value = true;
     fileList1.value = [
       {
         name: "1.png",
@@ -505,6 +538,7 @@ onMounted(() => {
     ];
   }
   if (user.idCardOpposite) {
+    hideUploadEdit2.value = true;
     fileList2.value = [
       {
         name: "2.png",
@@ -513,6 +547,7 @@ onMounted(() => {
     ];
   }
   if (user.businessLicense) {
+    hideUploadEdit3.value = true;
     fileList3.value = [
       {
         name: "3.png",
@@ -521,6 +556,7 @@ onMounted(() => {
     ];
   }
   if (user.operatePermit) {
+    hideUploadEdit4.value = true;
     fileList4.value = [
       {
         name: "4.pmg",
@@ -546,7 +582,7 @@ onMounted(() => {
 ::v-deep(.el-form-item__error) {
   min-width: 120px;
 }
-.hid {
+::v-deep(.hid .el-upload--picture-card) {
   display: none;
 }
 </style>

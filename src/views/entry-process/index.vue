@@ -19,7 +19,6 @@ import { apiLogin } from "@/api/user";
 let user = useUserInfo();
 const loading = ref(false);
 const statusComponent = computed(() => {
-  console.log("statusComponent", user.state);
   let component;
   switch (user.state) {
     case State.know:
@@ -66,10 +65,8 @@ const handleNext = (state: State, materialApplyState: MaterialApplyState) => {
 };
 
 onMounted(async () => {
-  const { data } = await apiLogin(user.mobile!);
-  user.$state = data;
-  console.log(user);
-  console.log(user.name);
+  // const { data } = await apiLogin(user.mobile!);
+  // user.$state = data;
   // user.state = 3;
   active.value = initActive();
   loading.value = true;
