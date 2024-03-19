@@ -38,7 +38,7 @@ class Http {
         return response;
       },
       (error) => {
-        return error;
+        return Promise.reject(error);
       }
     );
   }
@@ -48,7 +48,7 @@ class Http {
       this.instance
         .request<any, Result<ResultData<T>>>(config)
         .then((response) => {
-          const { code, message } = response.data;
+          const { code, message } = response?.data;
           if (code >= 400) {
             ElMessage({ message: message, type: "error" });
             reject(response.data);

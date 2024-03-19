@@ -13,6 +13,11 @@ const routes: RouteRecordRaw[] = [
         name: "入驻流程",
         component: () => import("@/views/entry-process/index.vue"),
       },
+      {
+        path: "union-inquiry",
+        name: "工会询价",
+        component: () => import("@/views/union-inquiry/union-inquiry.vue"),
+      },
     ],
   },
   {
@@ -33,9 +38,12 @@ router.beforeEach((to, from, next) => {
   if (to.path !== EnumPath.LOGIN) {
     if (!user.id) {
       next(EnumPath.LOGIN);
+    } else {
+      next();
     }
+  } else {
+    next();
   }
-  next();
 });
 
 export default router;

@@ -8,7 +8,7 @@ export const useUserInfo = defineStore("userInfo", {
   state(): User {
     return {
       mobile: "",
-      id: 0,
+      id: 1,
       state: State.know,
       materialApplyState: MaterialApplyState.unfinished,
       businessLicense: undefined,
