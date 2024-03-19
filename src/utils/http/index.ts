@@ -48,14 +48,15 @@ class Http {
       this.instance
         .request<any, Result<ResultData<T>>>(config)
         .then((response) => {
-          const { code, message, data } = response.data;
+          const { code, message } = response.data;
           if (code >= 400) {
-            ElMessage({ message: (data as string) || message, type: "error" });
+            ElMessage({ message: message, type: "error" });
             reject(response.data);
           }
           resolve(response.data);
         })
         .catch((error) => {
+          ElMessage({ message: error, type: "error" });
           reject(error);
         });
     });

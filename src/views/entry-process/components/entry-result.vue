@@ -48,7 +48,7 @@
     <p class="mt-2 text-gray-400 text-sm">
       你提交的入驻申请被拒绝，可以重新发起申请。
     </p>
-    <el-button type="primary" class="mt-5" @click="handleRevisit"
+    <el-button type="primary" class="mt-5" @click="handleRevisitError"
       >重新发起</el-button
     >
   </div>
@@ -68,12 +68,18 @@ const handleRevisit = async () => {
     state: State.declare,
     materialApplyState: MaterialApplyState.unfinished,
   });
-  user.state = State.declare;
-  user.materialApplyState = MaterialApplyState.unfinished;
   emits("stepNext", State.declare, MaterialApplyState.unfinished);
 };
 const goLogin = () => {
   window.location.href = "https://education.showyork.com/education/#/login";
+};
+const handleRevisitError = async () => {
+  await apiUpdateUser({
+    id: user.id,
+    state: State.know,
+    materialApplyState: MaterialApplyState.unfinished,
+  });
+  emits("stepNext", State.know, MaterialApplyState.unfinished);
 };
 </script>
 

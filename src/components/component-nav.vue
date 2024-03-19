@@ -6,15 +6,19 @@
       <el-button>登录</el-button>
     </div>
     <div v-else flex>
-      <el-avatar
-        class="!h-[32px]"
-        src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+      <img
+        class="w-10 h-10 rounded-full block mr-2"
+        src="../../assets/images/common/avatar.png"
+        alt="avatar"
       />
-      <span class="line-height-[32px]">13462771841</span>
+      <span class="line-height-[32px]">{{ user.loginMobile }}</span>
     </div>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useUserInfo } from "@/store";
+const user = useUserInfo();
+</script>
 
 <style scoped lang="scss"></style>

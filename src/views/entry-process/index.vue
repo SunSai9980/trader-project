@@ -65,9 +65,10 @@ const handleNext = (state: State, materialApplyState: MaterialApplyState) => {
 };
 
 onMounted(async () => {
-  // const { data } = await apiLogin(user.mobile!);
-  // user.$state = data;
-  // user.state = 3;
+  const { data } = await apiLogin(user.loginMobile!);
+  user.$state = data;
+  // user.state = 4;
+  // user.materialApplyState = 1;
   active.value = initActive();
   loading.value = true;
 });

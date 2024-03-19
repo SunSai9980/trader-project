@@ -29,4 +29,5 @@ export interface User {
   recommendUser?: string;
   state?: State;
   reason?: string;
+  loginMobile?: string;
 }

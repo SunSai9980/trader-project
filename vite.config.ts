@@ -10,8 +10,6 @@ import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 // https://vitejs.dev/config/
 export default defineConfig((configEnv: ConfigEnv) => {
   const env = loadEnv(configEnv.mode, process.cwd());
-  console.log(env);
-  console.log(env.VITE_PROXY_URL);
   return {
     base: "./",
     plugins: [

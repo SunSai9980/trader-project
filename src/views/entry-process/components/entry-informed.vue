@@ -45,6 +45,7 @@
       5.
       拟入驻主体如违反上述承诺，均需承担一切责任，对阿拉教师码平台或第三方造成损失的，须赔偿损失。
     </div>
+    <div class="text-sm leading-7">申报流程如下所示：</div>
     <img
       class="w-full block"
       src="../../../assets/images/entry-materials/process.png"
@@ -65,7 +66,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineEmits } from "vue";
+import { ref } from "vue";
 import { apiUpdateUser } from "@/api/user";
 import { useUserInfo } from "@/store";
 import { MaterialApplyState, State } from "@/enums";
@@ -79,7 +80,7 @@ const handleClick = async () => {
     state: State.declare,
     materialApplyState: MaterialApplyState.unfinished,
   });
-  emits("stepNext", 2, 1);
+  emits("stepNext", State.declare, MaterialApplyState.unfinished);
 };
 </script>
 

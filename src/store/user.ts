@@ -26,6 +26,7 @@ export const useUserInfo = defineStore("userInfo", {
       password: undefined,
       recommendUser: undefined,
       reason: undefined,
+      loginMobile: undefined,
     };
   },
   getters: {},

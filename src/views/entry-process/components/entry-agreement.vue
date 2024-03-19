@@ -7,13 +7,13 @@
   >
     <el-step title="知晓协议">
       <!-- <template #description>
-        <div>{{ user.mobile }}</div>
+        <div>{{ user.loginMobile! }}</div>
         <div>{{ dayjs(user.createTime).format("YYYY-MM-DD HH:mm") }}</div>
       </template> -->
     </el-step>
     <el-step title="申报材料">
       <!-- <template #description>
-        <div>{{ user.mobile }}</div>
+        <div>{{ user.loginMobile }}</div>
         <div>{{ dayjs(user.createTime).format("YYYY-MM-DD HH:mm") }}</div>
       </template> -->
     </el-step>
@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps } from "vue";
+// import { defineProps } from "vue";
 // import { useUserInfo } from "@/store";
 // import dayjs from "dayjs";
 withDefaults(defineProps<{ active: number }>(), { active: 0 });
