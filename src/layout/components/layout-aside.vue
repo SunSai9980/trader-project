@@ -16,16 +16,12 @@
           <span>{{ item.label }}</span>
         </template>
       </el-menu-item>
-      <!-- <el-menu-item index="2">
-        <el-icon><House /></el-icon>
-        <template #title>工会询价</template>
-      </el-menu-item> -->
     </el-menu>
   </el-scrollbar>
 </template>
 
 <script setup lang="ts">
-import { House } from "@element-plus/icons-vue";
+import { House, Collection } from "@element-plus/icons-vue";
 import { useRoute } from "vue-router";
 import { ref } from "vue";
 
@@ -42,15 +38,15 @@ const menuArr = [
     id: 2,
     label: "工会询价",
     router: "/union-inquiry",
-    icon: House,
+    icon: Collection,
   },
 ];
 
-const handleOpen = (key: string, keyPath: string[]) => {
+const handleOpen = (_key: string, _keyPath: string[]) => {
   // console.log("open", key, keyPath);
 };
-const handleClose = (key: string, keyPath: string[]) => {
-  console.log("close", key, keyPath);
+const handleClose = (_key: string, _keyPath: string[]) => {
+  // console.log("close", key, keyPath);
 };
 </script>
 

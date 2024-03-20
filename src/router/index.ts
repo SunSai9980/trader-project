@@ -33,7 +33,7 @@ const router = createRouter({
   scrollBehavior: () => ({ left: 0, top: 0 }),
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
   const user = useUserInfo();
   if (to.path !== EnumPath.LOGIN) {
     if (!user.id) {

@@ -1,6 +1,9 @@
 <template>
   <div v-if="loading">
-    <div v-if="user.materialApplyState === MaterialApplyState.unfinished">
+    <div
+      v-if="user.materialApplyState === MaterialApplyState.unfinished"
+      class="pb-[64px]"
+    >
       <el-form
         :model="materialsForm"
         ref="formRef"
@@ -43,7 +46,7 @@
                 @onRemove="handleIdCardFrontRemove"
               >
                 <div class="flex flex-col justify-center items-center">
-                  <el-icon><Plus /></el-icon>
+                  <el-icon><i-ep-plus /></el-icon>
                   <div class="text-xs text-[#8f8f8f] mt-[6px]">人像面</div>
                 </div>
               </entry-upload>
@@ -59,7 +62,7 @@
                 @onRemove="handleIdCardOppositeRemove"
               >
                 <div class="flex flex-col justify-center items-center">
-                  <el-icon><Plus /></el-icon>
+                  <el-icon><i-ep-plus /></el-icon>
                   <div class="text-xs text-[#8f8f8f] mt-[6px]">国徽面</div>
                 </div>
               </entry-upload>
@@ -72,8 +75,12 @@
             @click="handleArrowUp1"
           >
             <span class="text-xs mr-1">查看图片要求及示例</span
-            ><el-icon size="10px" v-show="iconArrowUp1"><ArrowUp /></el-icon>
-            <el-icon size="10px" v-show="!iconArrowUp1"><ArrowDown /></el-icon>
+            ><el-icon size="10px" v-show="iconArrowUp1"
+              ><i-ep-arrow-up
+            /></el-icon>
+            <el-icon size="10px" v-show="!iconArrowUp1"
+              ><i-ep-arrow-down
+            /></el-icon>
           </div>
           <div
             class="p-[20px] bg-#fafafa mt-1 w-[450px] text-#aaaaaa"
@@ -117,7 +124,7 @@
             @before-upload="beforeUpload"
             @onRemove="handleBusinessLicenseRemove"
           >
-            <el-icon><Plus /></el-icon>
+            <el-icon><i-ep-plus /></el-icon>
           </entry-upload>
         </el-form-item>
         <div class="ml-[150px] mb-6">
@@ -126,8 +133,12 @@
             @click="handleArrowUp2"
           >
             <span class="text-xs mr-1">查看图片要求及示例</span
-            ><el-icon size="10px" v-show="iconArrowUp2"><ArrowUp /></el-icon>
-            <el-icon size="10px" v-show="!iconArrowUp2"><ArrowDown /></el-icon>
+            ><el-icon size="10px" v-show="iconArrowUp2"
+              ><i-ep-arrow-up
+            /></el-icon>
+            <el-icon size="10px" v-show="!iconArrowUp2"
+              ><i-ep-arrow-down
+            /></el-icon>
           </div>
           <div
             class="p-[20px] bg-#fafafa mt-1 w-[450px] text-#aaaaaa"
@@ -172,7 +183,7 @@
             @before-upload="beforeUpload"
             @onRemove="handleOperatePermitRemove"
           >
-            <el-icon><Plus /></el-icon>
+            <el-icon><i-ep-plus /></el-icon>
           </entry-upload>
         </el-form-item>
         <div class="ml-[150px] mb-6">
@@ -181,8 +192,12 @@
             @click="handleArrowUp3"
           >
             <span class="text-xs mr-1">查看图片要求及示例</span
-            ><el-icon size="10px" v-show="iconArrowUp3"><ArrowUp /></el-icon>
-            <el-icon size="10px" v-show="!iconArrowUp3"><ArrowDown /></el-icon>
+            ><el-icon size="10px" v-show="iconArrowUp3"
+              ><i-ep-arrow-up
+            /></el-icon>
+            <el-icon size="10px" v-show="!iconArrowUp3"
+              ><i-ep-arrow-down
+            /></el-icon>
           </div>
           <div
             class="p-[20px] bg-#fafafa mt-1 w-[450px] text-#aaaaaa"
@@ -220,9 +235,10 @@
           <el-upload
             v-model:file-list="fileList5"
             class="upload-demo"
+            ref="uploadTag"
             accept="pdf"
             :limit="1"
-            :action="url"
+            :action="UPLOAD_URL"
             :before-upload="beforeUploadPdf"
             :on-success="handleCommitmentSuccess"
             :on-remove="handleCommitmentRemove"
@@ -250,14 +266,16 @@
           </div>
         </div>
       </el-form>
-      <div class="mt-6 py-3 px-10 shadow flex items-center">
+      <div
+        class="mt-6 py-3 px-10 shadow flex items-center fixed bottom-0 right-[20px] left-[220px] bg-#fff"
+      >
         <el-button type="primary" @click="handleSubmit(formRef)"
           >提交</el-button
         >
       </div>
     </div>
     <div v-else class="flex justify-center items-center flex-col pt-20">
-      <el-icon size="60" color="#67C23A"><SuccessFilled /></el-icon>
+      <el-icon size="60" color="#67C23A"><i-ep-success-filled /></el-icon>
       <div class="mt-5 text-2xl font-bold">提交成功</div>
       <p class="mt-2 text-gray-400 text-sm">审核时间3-7个工作日</p>
     </div>
@@ -266,25 +284,19 @@
 
 <script setup lang="ts">
 import entryUpload from "./entry-upload.vue";
-import { ref, reactive, onMounted } from "vue";
 import {
   type FormInstance,
   type FormRules,
   type UploadFile,
   type UploadProps,
   type UploadUserFile,
+  type UploadInstance,
 } from "element-plus";
 import { useUserInfo } from "@/store";
 import { validatorMobile, validatorEmail, validatorCreditCode } from "@/utils";
 import { State, MaterialApplyState } from "@/enums";
-import {
-  Plus,
-  ArrowUp,
-  ArrowDown,
-  SuccessFilled,
-} from "@element-plus/icons-vue";
 import { apiUpdateUser } from "@/api/user";
-const url = import.meta.env.VITE_API_URL + "/sys/oss/upload";
+import { UPLOAD_URL } from "@/constant";
 interface Materials {
   id: number;
   name: string;
@@ -324,6 +336,7 @@ const handleArrowUp3 = () => {
   iconArrowUp3.value = !iconArrowUp3.value;
 };
 const formRef = ref<FormInstance>();
+const uploadTag = ref<UploadInstance>();
 const fileList1 = ref<UploadUserFile[]>([]);
 const fileList2 = ref<UploadUserFile[]>([]);
 const fileList3 = ref<UploadUserFile[]>([]);
@@ -429,7 +442,7 @@ const beforeUpload = (file: UploadFile) => {
     return false;
   }
 };
-const beforeUploadPdf = (file: UploadFile) => {
+const beforeUploadPdf: UploadProps["beforeUpload"] = (file) => {
   const fileName = file.name;
   const fileType = fileName.substring(fileName.lastIndexOf("."));
   if (fileType === ".pdf") {
@@ -444,72 +457,58 @@ const beforeUploadPdf = (file: UploadFile) => {
   }
 };
 const handleIdCardFrontSuccess: UploadProps["onSuccess"] = (response) => {
-  if (response.code === 200) {
-    materialsForm.idCardFront = response.message;
-    ElMessage.success("上传成功");
-  } else {
-    ElMessage.error("上传失败, 请重新上传");
-  }
+  materialsForm.idCardFront = response.message;
 };
 const handleIdCardOppositeSuccess: UploadProps["onSuccess"] = (response) => {
-  if (response.code === 200) {
-    materialsForm.idCardOpposite = response.message;
-    ElMessage.success("上传成功");
-  } else {
-    ElMessage.error("上传失败, 请重新上传");
-  }
+  materialsForm.idCardOpposite = response.message;
 };
-const handleCommitmentSuccess: UploadProps["onSuccess"] = (response) => {
+const handleCommitmentSuccess: UploadProps["onSuccess"] = (
+  response,
+  uploadFiles
+) => {
   if (response.code === 200) {
-    materialsForm.commitment = response.message;
+    materialsForm.commitment = JSON.stringify([
+      { name: uploadFiles.name, url: response.message },
+    ]);
     ElMessage.success("上传成功");
   } else {
+    uploadTag.value?.handleRemove(uploadFiles);
     ElMessage.error("上传失败, 请重新上传");
   }
 };
 const handleOperatePermitSuccess: UploadProps["onSuccess"] = (response) => {
-  if (response.code === 200) {
-    materialsForm.operatePermit = response.message;
-    ElMessage.success("上传成功");
-  } else {
-    ElMessage.error("上传失败, 请重新上传");
-  }
+  materialsForm.operatePermit = response.message;
 };
 const handleBusinessLicenseSuccess: UploadProps["onSuccess"] = (response) => {
-  if (response.code === 200) {
-    materialsForm.businessLicense = response.message;
-    ElMessage.success("上传成功");
-  } else {
-    ElMessage.error("上传失败, 请重新上传");
-  }
+  materialsForm.businessLicense = response.message;
 };
 const handleBusinessLicenseRemove: UploadProps["onRemove"] = (
-  uploadFile,
-  uploadFiles
+  _uploadFile,
+  _uploadFiles
 ) => {
   materialsForm.businessLicense = "";
 };
 const handleIdCardFrontRemove: UploadProps["onRemove"] = (
-  uploadFile,
-  uploadFiles
+  _uploadFile,
+  _uploadFiles
 ) => {
   materialsForm.idCardFront = "";
 };
 const handleIdCardOppositeRemove: UploadProps["onRemove"] = (
-  uploadFile,
-  uploadFiles
+  _uploadFile,
+  _uploadFiles
 ) => {
   materialsForm.idCardOpposite = "";
 };
 const handleCommitmentRemove: UploadProps["onRemove"] = (
-  uploadFile,
-  uploadFiles
+  _uploadFile,
+  _uploadFiles
 ) => {
   materialsForm.commitment = "";
 };
 const handleOperatePermitRemove: UploadProps["onRemove"] = (
-  uploadFile,
-  uploadFiles
+  _uploadFile,
+  _uploadFiles
 ) => {
   materialsForm.operatePermit = "";
 };
@@ -524,13 +523,17 @@ const handleSubmit = async (formEl: FormInstance | undefined) => {
         showCancelButton: true,
       })
         .then(async () => {
-          await apiUpdateUser(materialsForm);
-          ElMessage({
-            type: "success",
-            message: "提交成功",
-          });
-          user.$state = { ...user, ...materialsForm };
-          emits("stepNext", State.declare, MaterialApplyState.fulfil);
+          try {
+            await apiUpdateUser(materialsForm);
+            ElMessage({
+              type: "success",
+              message: "提交成功",
+            });
+            user.$state = { ...user, ...materialsForm };
+            emits("stepNext", State.declare, MaterialApplyState.fulfil);
+          } catch (e) {
+            console.error(e);
+          }
         })
         .catch(() => {
           ElMessage({
@@ -577,12 +580,7 @@ onMounted(() => {
       },
     ];
     if (user.commitment) {
-      fileList5.value = [
-        {
-          name: "承诺书.pdf",
-          url: user.operatePermit,
-        },
-      ];
+      fileList5.value = JSON.parse(user.commitment);
     }
   }
   loading.value = true;
@@ -595,5 +593,8 @@ onMounted(() => {
 }
 ::v-deep(.el-form-item__error) {
   min-width: 120px;
+}
+:deep(label) {
+  font-weight: 400;
 }
 </style>

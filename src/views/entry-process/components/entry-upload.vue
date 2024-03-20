@@ -2,6 +2,7 @@
   <el-upload
     v-model:file-list="fileList"
     accept=".png,.jpg"
+    ref="uploadTag"
     :limit="limit"
     :on-preview="handlePictureCardPreview"
     :action="action"
@@ -20,8 +21,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import type { UploadUserFile, UploadFile, UploadProps } from "element-plus";
+import { UPLOAD_URL } from "@/constant";
+import type {
+  UploadUserFile,
+  UploadFile,
+  UploadProps,
+  UploadInstance,
+} from "element-plus";
 
 interface EntryUploadProps {
   limit?: number;
@@ -32,7 +38,7 @@ interface EntryUploadProps {
 
 const props = withDefaults(defineProps<EntryUploadProps>(), {
   limit: 1,
-  action: import.meta.env.VITE_API_URL + "/sys/oss/upload",
+  action: UPLOAD_URL,
 });
 const emits = defineEmits(["onSuccess", "beforeUpload", "onRemove"]);
 
@@ -40,22 +46,32 @@ const fileList = ref<UploadUserFile[]>(props.fileList);
 const dialogImageUrl = ref<string>("");
 const dialogVisible = ref<boolean>(false);
 const hideUploadEdit = ref<boolean>(props.fileList.length > 0);
+const uploadTag = ref<UploadInstance>();
 
 const handlePictureCardPreview = (file: UploadFile) => {
   dialogImageUrl.value = file.url!;
   dialogVisible.value = true;
 };
-const beforeUpload = (file: UploadFile) => {
+const beforeUpload: UploadProps["beforeUpload"] = (file) => {
   emits("beforeUpload", file);
 };
-const handleIdCardFrontSuccess: UploadProps["onSuccess"] = (response) => {
-  emits("onSuccess", response);
+const handleIdCardFrontSuccess: UploadProps["onSuccess"] = (
+  response,
+  uploadFiles
+) => {
+  if (response.code == 200) {
+    emits("onSuccess", response);
+    ElMessage.success("上传成功");
+  } else {
+    uploadTag.value!.handleRemove(uploadFiles);
+    ElMessage.error("上传失败, 请重新上传");
+  }
 };
 const handleRemove: UploadProps["onRemove"] = (uploadFile, uploadFiles) => {
   hideUploadEdit.value = uploadFiles.length > 0;
   emits("onRemove", uploadFile, uploadFiles);
 };
-const handleChange: UploadProps["onChange"] = (uploadFile, uploadFiles) => {
+const handleChange: UploadProps["onChange"] = (_uploadFile, uploadFiles) => {
   hideUploadEdit.value = uploadFiles.length > 0;
 };
 </script>

@@ -4,22 +4,42 @@ import vue from "@vitejs/plugin-vue";
 import { resolve } from "path";
 import AutoImport from "unplugin-auto-import/vite";
 import UnoCSS from "unocss/vite";
+import Icons from "unplugin-icons/vite";
+import IconsResolver from "unplugin-icons/resolver";
 import Components from "unplugin-vue-components/vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
+import path from "path";
 
+const pathSrc = path.resolve(__dirname, "src");
 // https://vitejs.dev/config/
 export default defineConfig((configEnv: ConfigEnv) => {
-  const env = loadEnv(configEnv.mode, process.cwd());
+  // const env = loadEnv(configEnv.mode, process.cwd());
   return {
     base: "./",
     plugins: [
       vue(),
       UnoCSS(),
       AutoImport({
-        resolvers: [ElementPlusResolver()],
+        imports: ["vue"],
+        resolvers: [
+          ElementPlusResolver(),
+          IconsResolver({
+            prefix: "Icon",
+          }),
+        ],
+        dts: path.resolve(pathSrc, "auto-imports.d.ts"),
       }),
       Components({
-        resolvers: [ElementPlusResolver()],
+        resolvers: [
+          IconsResolver({
+            enabledCollections: ["ep"],
+          }),
+          ElementPlusResolver(),
+        ],
+        dts: path.resolve(pathSrc, "components.d.ts"),
+      }),
+      Icons({
+        autoInstall: true,
       }),
     ],
     resolve: {
@@ -28,6 +48,7 @@ export default defineConfig((configEnv: ConfigEnv) => {
       },
     },
     build: {
+      outDir: "dist-trader-" + Date.now(),
       rollupOptions: {
         output: {
           manualChunks(id) {
@@ -43,7 +64,7 @@ export default defineConfig((configEnv: ConfigEnv) => {
       host: "0.0.0.0",
       proxy: {
         "/api": {
-          target: env.VITE_PROXY_URL,
+          target: "http://192.168.1.129:8080",
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ""),
         },

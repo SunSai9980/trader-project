@@ -20,7 +20,7 @@
           placeholder="手机号"
         />
       </el-form-item>
-      <el-form-item prop>
+      <el-form-item>
         <el-row :gutter="8">
           <el-col :span="14"
             ><el-input
