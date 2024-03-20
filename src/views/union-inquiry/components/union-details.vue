@@ -252,21 +252,30 @@ const rules = reactive<FormRules<FormData>>({
     },
   ],
 });
+let pol = true;
 const handleConfirm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
-  await formEl.validate((valid, fields) => {
+  await formEl.validate(async (valid, fields) => {
     if (valid) {
-      apiSupplierCreate({
-        annex: JSON.stringify(detailsForm.annex),
-        mobile: detailsForm.mobile,
-        loginMobile: user.loginMobile!,
-        sunlightWelfareId: props.detailInfo?.id!,
-      });
-      ElMessage.success("提交成功");
-      setTimeout(() => {
-        dialogTableVisible.value = false;
-        emits("goList");
-      }, 2000);
+      if (pol) {
+        try {
+          pol = false;
+          await apiSupplierCreate({
+            annex: JSON.stringify(detailsForm.annex),
+            mobile: detailsForm.mobile,
+            loginMobile: user.loginMobile!,
+            sunlightWelfareId: props.detailInfo?.id!,
+          });
+          ElMessage.success("提交成功");
+          dialogTableVisible.value = false;
+          setTimeout(() => {
+            emits("goList");
+          }, 1000);
+        } catch (e) {
+        } finally {
+          pol = true;
+        }
+      }
     } else {
       console.log("error submit!", fields);
     }
