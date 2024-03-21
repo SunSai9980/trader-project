@@ -250,15 +250,15 @@
           class="ml-[150px] mb-6 p-[20px] mt-[-3px] bg-#fafafa w-[450px] text-#aaaaaa"
         >
           <div class="text-xs leading-7">
-            1.请下载<a
-              href="../../../../public/undertaking.docx"
-              download="承诺书模板"
-              class="text-[#409EFF] text-xs"
-              hover="text-[#409EFF]"
-              active="text-[#409EFF]"
-              visited="text-[#409EFF]"
-              link="text-[#409EFF]"
-              >承诺书模板</a
+            1.请下载<span
+              class="text-[#409EFF] text-xs cursor-pointer"
+              @click="
+                downloadFile(
+                  'https://ddup-education.oss-cn-beijing.aliyuncs.com/20240321/fc7ab9e7ecc044939829c960f64bdf03.docx',
+                  '模板承诺书.docx'
+                )
+              "
+              >《模板承诺书》</span
             >填写并盖章后扫描对应文件上传，要求公章完整清晰
           </div>
           <div class="text-xs leading-7">
@@ -293,7 +293,12 @@ import {
   type UploadInstance,
 } from "element-plus";
 import { useUserInfo } from "@/store";
-import { validatorMobile, validatorEmail, validatorCreditCode } from "@/utils";
+import {
+  validatorMobile,
+  validatorEmail,
+  validatorCreditCode,
+  downloadFile,
+} from "@/utils";
 import { State, MaterialApplyState } from "@/enums";
 import { apiUpdateUser } from "@/api/user";
 import { UPLOAD_URL } from "@/constant";
@@ -323,11 +328,11 @@ const urlList = reactive<string[]>([
 ]);
 const emits = defineEmits(["stepNext"]);
 let user = useUserInfo();
-const iconArrowUp1 = ref(false);
+const iconArrowUp1 = ref(true);
 const handleArrowUp1 = () => {
   iconArrowUp1.value = !iconArrowUp1.value;
 };
-const iconArrowUp2 = ref(false);
+const iconArrowUp2 = ref(true);
 const handleArrowUp2 = () => {
   iconArrowUp2.value = !iconArrowUp2.value;
 };
@@ -580,7 +585,16 @@ onMounted(() => {
       },
     ];
     if (user.commitment) {
-      fileList5.value = JSON.parse(user.commitment);
+      try {
+        fileList5.value = JSON.parse(user.commitment);
+      } catch (_e) {
+        fileList5.value = [
+          {
+            name: "承诺书",
+            url: user.commitment,
+          },
+        ];
+      }
     }
   }
   loading.value = true;

@@ -2,26 +2,24 @@
   <div class="px-20 mt-10 pb-[64px]">
     <div text-lg leading-7>欢迎使用阿拉教师码商户平台！</div>
     <div text-base leading-7 mt-2>
-      申请 “阳光福利” 商户入驻前，请仔细阅读并同意以下内容及<a
-        class="text-[#409EFF]"
-        hover="text-[#409EFF]"
-        active="text-[#409EFF]"
-        visited="text-[#409EFF]"
-        link="text-[#409EFF]"
-        href="../../../../public/agreement.docx"
-        download="阿拉教师码用户协议"
-        target="_blank"
-        >《阿拉教师码用户协议》</a
-      >、<a
-        class="text-[#409EFF]"
-        hover="text-[#409EFF]"
-        active="text-[#409EFF]"
-        visited="text-[#409EFF]"
-        link="text-[#409EFF]"
-        href="../../../../public/privacy.docx"
-        target="_blank"
-        download="阿拉教师码用户隐私协议"
-        >《阿拉教师码用户隐私协议》</a
+      申请 “阳光福利” 商户入驻前，请仔细阅读并同意以下内容及<span
+        class="text-[#409EFF] cursor-pointer"
+        @click="
+          downloadFile(
+            'https://ddup-education.oss-cn-beijing.aliyuncs.com/20240321/8307fa769212482fb3471d60a17a31e1.docx',
+            '阿拉教师码用户协议.docx'
+          )
+        "
+        >《阿拉教师码用户协议》</span
+      >、<span
+        class="text-[#409EFF] cursor-pointer"
+        @click="
+          downloadFile(
+            'https://ddup-education.oss-cn-beijing.aliyuncs.com/20240321/4493a9c0a19b465b94e0e21a9ba72b53.docx',
+            '阿拉教师码用户隐私协议.docx'
+          )
+        "
+        >《阿拉教师码用户隐私协议》</span
       >。
     </div>
     <div text-base leading-7>
@@ -72,6 +70,7 @@ import { ref } from "vue";
 import { apiUpdateUser } from "@/api/user";
 import { useUserInfo } from "@/store";
 import { MaterialApplyState, State } from "@/enums";
+import { downloadFile } from "@/utils";
 
 const user = useUserInfo();
 const checked = ref(false);

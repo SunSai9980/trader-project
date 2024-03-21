@@ -52,10 +52,18 @@ export default defineConfig((configEnv: ConfigEnv) => {
       rollupOptions: {
         output: {
           manualChunks(id) {
+            if (id.includes("vue")) {
+              return "vue";
+            }
+            if (id.includes("dayjs")) {
+              return "dayjs";
+            }
             if (id.includes("node_modules")) {
               return "vendor";
             }
           },
+          chunkFileNames: "assets/js/[name]-[hash].js",
+          assetFileNames: "assets/[ext]/[name]-[hash][extname]",
         },
       },
     },
@@ -64,7 +72,7 @@ export default defineConfig((configEnv: ConfigEnv) => {
       host: "0.0.0.0",
       proxy: {
         "/api": {
-          target: "http://192.168.1.129:8080",
+          target: "http://192.168.1.129:8099",
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ""),
         },
