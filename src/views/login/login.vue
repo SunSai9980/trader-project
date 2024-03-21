@@ -62,6 +62,7 @@ import { Message, Iphone } from "@element-plus/icons-vue";
 import { apiLogin, apiSendCode, apiOnlyValidCode } from "@/api/user";
 import { useUserInfo } from "@/store";
 import { useRouter } from "vue-router";
+import { CARETAKERS } from "@/constants";
 
 interface LoginForm {
   mobile: string;
@@ -107,7 +108,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         user.$state = data;
         loading.value = false;
         dialogVisible.value = false;
-        router.replace("/");
+        if (CARETAKERS.includes(loginForm.mobile)) {
+          router.replace("/merchant-audit");
+        } else {
+          router.replace("/");
+        }
       } catch (e) {
         loading.value = false;
       }

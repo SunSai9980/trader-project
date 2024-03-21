@@ -21,13 +21,17 @@
 </template>
 
 <script setup lang="ts">
-import { House, Collection } from "@element-plus/icons-vue";
+import { House, Collection, WarnTriangleFilled } from "@element-plus/icons-vue";
 import { useRoute } from "vue-router";
 import { ref } from "vue";
+import { CARETAKERS } from "@/constants";
+import { useUserInfo } from "@/store";
+import type { MenuItem } from "@/types";
 
 const route = useRoute();
+const user = useUserInfo();
 const defaultActive = ref(route.path);
-const menuArr = [
+const menuArr = ref<MenuItem[]>([
   {
     id: 1,
     label: "商户入驻",
@@ -40,7 +44,7 @@ const menuArr = [
     router: "/union-inquiry",
     icon: Collection,
   },
-];
+]);
 
 const handleOpen = (_key: string, _keyPath: string[]) => {
   // console.log("open", key, keyPath);
@@ -48,6 +52,18 @@ const handleOpen = (_key: string, _keyPath: string[]) => {
 const handleClose = (_key: string, _keyPath: string[]) => {
   // console.log("close", key, keyPath);
 };
+onBeforeMount(() => {
+  if (CARETAKERS.includes(user.loginMobile!)) {
+    menuArr.value = [
+      {
+        id: 1,
+        label: "商户入驻",
+        router: "/merchant-audit",
+        icon: WarnTriangleFilled,
+      },
+    ];
+  }
+});
 </script>
 
 <style scoped lang="scss">

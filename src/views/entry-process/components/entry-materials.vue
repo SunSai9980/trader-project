@@ -242,6 +242,7 @@
             :before-upload="beforeUploadPdf"
             :on-success="handleCommitmentSuccess"
             :on-remove="handleCommitmentRemove"
+            :on-preview="handleCommitmentPreview"
           >
             <el-button>上传文件</el-button>
           </el-upload>
@@ -284,6 +285,7 @@
 
 <script setup lang="ts">
 import entryUpload from "./entry-upload.vue";
+import type { ResultData } from "@/utils/http/types";
 import {
   type FormInstance,
   type FormRules,
@@ -301,7 +303,7 @@ import {
 } from "@/utils";
 import { State, MaterialApplyState } from "@/enums";
 import { apiUpdateUser } from "@/api/user";
-import { UPLOAD_URL } from "@/constant";
+import { UPLOAD_URL } from "@/constants";
 interface Materials {
   id: number;
   name: string;
@@ -481,6 +483,16 @@ const handleCommitmentSuccess: UploadProps["onSuccess"] = (
     ElMessage.error("上传失败, 请重新上传");
   }
 };
+const handleCommitmentPreview: UploadProps["onPreview"] = (
+  uploadFile: UploadFile
+) => {
+  console.log("onPreview", uploadFile);
+  if (uploadFile.response) {
+    downloadFile((uploadFile.response as ResultData).message, uploadFile.name);
+  } else {
+    downloadFile(uploadFile.url!, uploadFile.name);
+  }
+};
 const handleOperatePermitSuccess: UploadProps["onSuccess"] = (response) => {
   materialsForm.operatePermit = response.message;
 };
@@ -612,3 +624,4 @@ onMounted(() => {
   font-weight: 400;
 }
 </style>
+@/constants

@@ -202,7 +202,7 @@ import type {
   SupplierWebList,
   SupplierWelfareItem,
 } from "@/types/union-inquiry";
-import { UPLOAD_URL } from "@/constant";
+import { UPLOAD_URL } from "@/constants";
 import dayjs from "dayjs";
 import type {
   FormInstance,
@@ -321,3 +321,4 @@ onMounted(async () => {
   font-weight: 400;
 }
 </style>
+@/constants

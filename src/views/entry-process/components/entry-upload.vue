@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { UPLOAD_URL } from "@/constant";
+import { UPLOAD_URL } from "@/constants";
 import type {
   UploadUserFile,
   UploadFile,
@@ -81,3 +81,4 @@ const handleChange: UploadProps["onChange"] = (_uploadFile, uploadFiles) => {
   display: none;
 }
 </style>
+@/constants

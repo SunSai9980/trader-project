@@ -10,13 +10,27 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: "entry-process",
-        name: "入驻流程",
+        name: "EntryProcess",
+        meta: {
+          label: "入驻流程",
+        },
         component: () => import("@/views/entry-process/index.vue"),
       },
       {
         path: "union-inquiry",
-        name: "工会询价",
+        name: "UnionInquiry",
+        meta: {
+          label: "工会询价",
+        },
         component: () => import("@/views/union-inquiry/union-inquiry.vue"),
+      },
+      {
+        path: "merchant-audit",
+        name: "MerchantAudit",
+        meta: {
+          label: "商户审核",
+        },
+        component: () => import("@/views/merchant-audit/merchant-audit.vue"),
       },
     ],
   },
