@@ -1,6 +1,8 @@
+import { CARETAKERS } from "./../constants/index";
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
 import { EnumPath } from "@/enums";
 import { useUserInfo } from "@/store";
+import { CARETAKERS_ROLE } from "@/constants";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -39,6 +41,11 @@ const routes: RouteRecordRaw[] = [
     name: "登录",
     component: () => import("@/views/login/login.vue"),
   },
+  {
+    path: "/error",
+    name: "失败",
+    component: () => import("@/views/error/error.vue"),
+  },
 ];
 
 const router = createRouter({
@@ -49,7 +56,13 @@ const router = createRouter({
 
 router.beforeEach((to, _from, next) => {
   const user = useUserInfo();
-  if (to.path !== EnumPath.LOGIN) {
+  if (CARETAKERS_ROLE.includes(to.name as string)) {
+    if (CARETAKERS.includes(to.query.mobile as string)) {
+      next();
+    } else {
+      next("/error");
+    }
+  } else if (to.path !== EnumPath.LOGIN) {
     if (!user.id) {
       next(EnumPath.LOGIN);
     } else {

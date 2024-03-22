@@ -66,6 +66,10 @@ export interface ResponseData<T> {
   list: T[];
   total: number;
 }
+export interface ResRecordsData<T> {
+  records: T[];
+  total: number;
+}
 
 export interface SupplierListParams {
   supplierMobile: string;

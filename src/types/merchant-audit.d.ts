@@ -1,6 +1,6 @@
 import { State } from "@/enums";
 
 export interface MerchantForm {
-  name: string;
+  enterpriseName?: string;
   state?: State;
 }

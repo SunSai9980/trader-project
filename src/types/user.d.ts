@@ -1,4 +1,5 @@
 import { State, MaterialApplyState } from "@/enums";
+import type { IBaseListParams } from "@/types";
 
 export interface ValidCode {
   code: string;
@@ -30,4 +31,13 @@ export interface User {
   state?: State;
   reason?: string;
   loginMobile?: string;
+}
+
+export interface IUserListParma {
+  deleted: boolean;
+  current: number;
+  size: number;
+  enterpriseName?: string;
+  states: State[];
+  materialApplyState?: MaterialApplyState.fulfil;
 }

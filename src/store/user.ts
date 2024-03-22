@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import type { User } from "@/api/user/types";
+import type { User } from "@/types";
 import { MaterialApplyState, State } from "@/enums";
 
 export const useUserInfo = defineStore("userInfo", {

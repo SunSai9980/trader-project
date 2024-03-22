@@ -14,8 +14,10 @@ import EntryResult from "./components/entry-result.vue";
 import { MaterialApplyState, State } from "@/enums";
 import { useUserInfo } from "@/store";
 import { ref, computed, onMounted } from "vue";
-import { apiLogin } from "@/api/user";
+import { apiUserGet } from "@/api/user";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 let user = useUserInfo();
 const loading = ref(false);
 const statusComponent = computed(() => {
@@ -65,8 +67,18 @@ const handleNext = (state: State, materialApplyState: MaterialApplyState) => {
 };
 
 onMounted(async () => {
-  const { data } = await apiLogin(user.loginMobile!);
-  user.$state = data;
+  if (user.id) {
+    const { data } = await apiUserGet(user.id);
+    if (data) {
+      user.$state = data;
+    } else {
+      user.$reset();
+      router.replace("/login");
+    }
+  } else {
+    user.$reset();
+    router.replace("/login");
+  }
   // user.state = 2;
   // user.materialApplyState = 1;
   active.value = initActive();

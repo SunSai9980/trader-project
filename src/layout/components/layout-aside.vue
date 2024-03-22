@@ -24,14 +24,12 @@
 import { House, Collection, WarnTriangleFilled } from "@element-plus/icons-vue";
 import { useRoute } from "vue-router";
 import { ref } from "vue";
-import { CARETAKERS } from "@/constants";
-import { useUserInfo } from "@/store";
+import { CARETAKERS_ROLE } from "@/constants";
 import type { MenuItem } from "@/types";
 
 const route = useRoute();
-const user = useUserInfo();
-const defaultActive = ref(route.path);
-const menuArr = ref<MenuItem[]>([
+const defaultActive = ref(route.fullPath);
+const menuArr = shallowRef<MenuItem[]>([
   {
     id: 1,
     label: "商户入驻",
@@ -53,12 +51,12 @@ const handleClose = (_key: string, _keyPath: string[]) => {
   // console.log("close", key, keyPath);
 };
 onBeforeMount(() => {
-  if (CARETAKERS.includes(user.loginMobile!)) {
+  if (CARETAKERS_ROLE.includes(route.name as string)) {
     menuArr.value = [
       {
         id: 1,
         label: "商户入驻",
-        router: "/merchant-audit",
+        router: route.fullPath,
         icon: WarnTriangleFilled,
       },
     ];
