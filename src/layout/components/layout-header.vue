@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-center justify-between w-full">
-    <div class="flex items-center font-semibold">阿拉教师码 | 商户平台</div>
+    <div class="flex items-center font-semibold">阿拉教师码 | 合作平台</div>
     <el-dropdown v-if="!CARETAKERS_ROLE.includes(route.name as string)">
       <div class="flex items-center">
         <img

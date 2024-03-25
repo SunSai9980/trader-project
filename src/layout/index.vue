@@ -8,9 +8,11 @@
         <el-aside width="200px" h-full class="bg-#001529">
           <layout-aside />
         </el-aside>
-        <el-main class="main p-[20px] !pb-0">
-          <layoutMain />
-        </el-main>
+        <el-scrollbar h-full>
+          <el-main class="main p-[20px] !pb-0">
+            <layoutMain />
+          </el-main>
+        </el-scrollbar>
       </el-container>
     </el-container>
   </div>

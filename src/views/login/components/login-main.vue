@@ -1,6 +1,6 @@
 <template>
   <div class="pt-[130px]">
-    <div class="text-center text-3xl font-bold title">赋能工会 传递关爱</div>
+    <div class="text-center text-3xl font-bold title">阳光合规 全心服务</div>
     <div class="mt-3 flex justify-center">
       <div class="px-4 text-sm text-neutral-500 label">便捷高效</div>
       <div class="px-4 text-sm text-neutral-500 label">透明合规</div>

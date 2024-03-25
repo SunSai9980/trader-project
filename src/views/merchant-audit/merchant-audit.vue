@@ -9,6 +9,7 @@
     :pendingNum="pendingNum"
     @addNum="addNum"
     @subNum="subNum"
+    @updateDetailInfoState="updateDetailInfoState"
   />
 </template>
 
@@ -44,6 +45,10 @@ const addNum = (state: State) => {
       successesNum.value += 1;
       break;
   }
+};
+const updateDetailInfoState = (state: State) => {
+  if (!detailInfo.value) return;
+  detailInfo.value.state = state;
 };
 const subNum = (state: State) => {
   switch (state) {

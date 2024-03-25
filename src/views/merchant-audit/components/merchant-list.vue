@@ -15,7 +15,7 @@
       >
     </el-row>
   </div>
-  <div>
+  <div class="pb-3">
     <div class="px-8 py-5 font-bold border-b border-b-#e9e9e9">记录列表</div>
     <div class="p-5">
       <el-form :model="formData" class="flex items-center flex-wrap">
@@ -81,7 +81,7 @@
     </div>
     <el-config-provider :locale="zhCn">
       <el-pagination
-        class="mt-5 flex justify-end"
+        class="mt-5 flex justify-end pr-3"
         v-model:current-page="currentPage"
         v-model:page-size="pageSize"
         :page-sizes="[10, 20, 30, 40]"
@@ -113,7 +113,13 @@ defineProps<{
   passNum: number;
   pendingNum: number;
 }>();
-const emits = defineEmits(["goList", "goDetails", "addNum", "subNum"]);
+const emits = defineEmits([
+  "goList",
+  "goDetails",
+  "addNum",
+  "subNum",
+  "updateDetailInfoState",
+]);
 const spacer = h(ElDivider, { direction: "vertical" });
 
 const options = reactive([

@@ -55,7 +55,7 @@ onBeforeMount(() => {
     menuArr.value = [
       {
         id: 1,
-        label: "商户入驻",
+        label: "商户审核",
         router: route.fullPath,
         icon: WarnTriangleFilled,
       },
