@@ -79,7 +79,7 @@ onMounted(async () => {
     user.$reset();
     router.replace("/login");
   }
-  // user.state = 2;
+  // user.state = 1;
   // user.materialApplyState = 1;
   active.value = initActive();
   loading.value = true;

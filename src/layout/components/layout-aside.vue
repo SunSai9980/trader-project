@@ -28,31 +28,11 @@ import { CARETAKERS_ROLE } from "@/constants";
 import type { MenuItem } from "@/types";
 
 const route = useRoute();
-const defaultActive = ref(route.fullPath);
-const menuArr = shallowRef<MenuItem[]>([
-  {
-    id: 1,
-    label: "商户入驻",
-    router: "/entry-process",
-    icon: House,
-  },
-  {
-    id: 2,
-    label: "工会询价",
-    router: "/union-inquiry",
-    icon: Collection,
-  },
-]);
+const defaultActive = computed(() => route.fullPath);
 
-const handleOpen = (_key: string, _keyPath: string[]) => {
-  // console.log("open", key, keyPath);
-};
-const handleClose = (_key: string, _keyPath: string[]) => {
-  // console.log("close", key, keyPath);
-};
-onBeforeMount(() => {
+const menuArr = computed<MenuItem[]>(() => {
   if (CARETAKERS_ROLE.includes(route.name as string)) {
-    menuArr.value = [
+    return [
       {
         id: 1,
         label: "商户审核",
@@ -60,8 +40,30 @@ onBeforeMount(() => {
         icon: WarnTriangleFilled,
       },
     ];
+  } else {
+    return [
+      {
+        id: 1,
+        label: "商户入驻",
+        router: "/entry-process",
+        icon: House,
+      },
+      {
+        id: 2,
+        label: "工会询价",
+        router: "/union-inquiry",
+        icon: Collection,
+      },
+    ];
   }
 });
+
+const handleOpen = (_key: string, _keyPath: string[]) => {
+  // console.log("open", key, keyPath);
+};
+const handleClose = (_key: string, _keyPath: string[]) => {
+  // console.log("close", key, keyPath);
+};
 </script>
 
 <style scoped lang="scss">

@@ -196,6 +196,7 @@ const getList = async (all: boolean = false) => {
     materialApplyState: MaterialApplyState.fulfil,
     current: currentPage.value,
     size: pageSize.value,
+    descs: "modify_time",
     enterpriseName: formData.enterpriseName,
     states: formData.state ? [formData.state] : [2, 3, 4, 5, 6],
   });

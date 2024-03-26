@@ -71,6 +71,7 @@ const stateNum = async () => {
     materialApplyState: MaterialApplyState.fulfil,
     current: 1,
     size: 100,
+    descs: "modify_time",
     states: [2, 3, 4, 5, 6],
   });
   records.forEach((record) => {

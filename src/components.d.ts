@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    CommAgreement: typeof import('./components/comm-agreement.vue')['default']
     ComponentNav: typeof import('./components/component-nav.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElButton: typeof import('element-plus/es')['ElButton']

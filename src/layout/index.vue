@@ -1,7 +1,10 @@
 <template>
   <div class="common-layout" h-screen>
     <el-container>
-      <el-header class="flex items-center justify-between">
+      <el-header
+        class="flex items-center justify-between z-10"
+        style="box-shadow: 0 5px 5px -5px gray"
+      >
         <layoutHeader />
       </el-header>
       <el-container class="aside">

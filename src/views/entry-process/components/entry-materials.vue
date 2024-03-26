@@ -255,7 +255,7 @@
               class="text-[#409EFF] text-xs cursor-pointer"
               @click="
                 downloadFile(
-                  'https://ddup-education.oss-cn-beijing.aliyuncs.com/20240321/fc7ab9e7ecc044939829c960f64bdf03.docx',
+                  'https://ddup-education.oss-cn-beijing.aliyuncs.com/20240326/8dc2f8680cd94722a15610b363ef2b02.docx',
                   '模板承诺书.docx'
                 )
               "

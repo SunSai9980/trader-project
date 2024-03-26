@@ -26,7 +26,7 @@ export const apiUserGet = (id: number) => {
  */
 export const apiUserList = (data: IUserListParma) => {
   return http.post<ResRecordsData<Required<User>>>({
-    url: `/merchant/user/list?current=${data.current}&size=${data.size}`,
+    url: `/merchant/user/list?current=${data.current}&size=${data.size}&descs=${data.descs}`,
     data,
   });
 };
