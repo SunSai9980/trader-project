@@ -1,6 +1,5 @@
 <template>
   <el-scrollbar h-full>
-    <!--      background-color="#409EFF"  -->
     <el-menu
       :default-active="defaultActive"
       @open="handleOpen"
@@ -23,7 +22,6 @@
 <script setup lang="ts">
 import { House, Collection, WarnTriangleFilled } from "@element-plus/icons-vue";
 import { useRoute } from "vue-router";
-import { ref } from "vue";
 import { CARETAKERS_ROLE } from "@/constants";
 import type { MenuItem } from "@/types";
 

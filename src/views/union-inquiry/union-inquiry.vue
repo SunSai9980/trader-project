@@ -1,5 +1,5 @@
 <template>
-  <div class="p-8">
+  <div class="p-8 h-full">
     <div
       class="flex items-center justify-between px-6 py-3 bg-#fafafa border-1 rounded-lg"
       border-color-gray

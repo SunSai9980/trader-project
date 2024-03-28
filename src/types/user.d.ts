@@ -40,5 +40,5 @@ export interface IUserListParma {
   enterpriseName?: string;
   states: State[];
   materialApplyState?: MaterialApplyState.fulfil;
-  descs?: string;
+  descs: string;
 }

@@ -159,7 +159,7 @@
           </el-col>
           <el-col :span="8">
             <div class="flex text-sm">
-              <div class="w-100">阳光福利商户承诺书：</div>
+              <div class="w-[140px]">阳光福利商户承诺书：</div>
               <span
                 class="text-[#409EFF] cursor-pointer"
                 v-for="(item, index) in commitment"
@@ -341,7 +341,7 @@ const handleReject = async (formEl: FormInstance | undefined) => {
 
 const dialogVisibleEntryAudit = ref(false);
 const formDataEntryAuditTag = ref<FormInstance>();
-const formDataEntryAudit = reactive<{ state: State }>({
+const formDataEntryAudit = reactive<{ state?: State }>({
   state: undefined,
 });
 const formDataEntryAuditRules = reactive<FormRules<{ state: State }>>({

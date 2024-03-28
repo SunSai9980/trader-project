@@ -64,7 +64,7 @@
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="120">
           <template #default="scope">
-            <el-space :size="10" :spacer="spacer">
+            <el-space :size="5" :spacer="spacer">
               <el-button type="primary" link @click="handleRemove(scope.row)"
                 >删除</el-button
               >
