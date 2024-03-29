@@ -5,8 +5,8 @@
       class="text-[#409EFF] cursor-pointer"
       @click="
         downloadFile(
-          'https://ddup-education.oss-cn-beijing.aliyuncs.com/20240321/8307fa769212482fb3471d60a17a31e1.docx',
-          '阿拉教师码用户协议.docx'
+          'https://ddup-education.oss-cn-beijing.aliyuncs.com/commodity/%E9%98%BF%E6%8B%89%E6%95%99%E5%B8%88%E7%A0%81%E7%94%A8%E6%88%B7%E5%8D%8F%E8%AE%AE0825.pdf',
+          '阿拉教师码用户协议.pdf'
         )
       "
       >《阿拉教师码用户协议》</span
@@ -14,8 +14,8 @@
       class="text-[#409EFF] cursor-pointer"
       @click="
         downloadFile(
-          'https://ddup-education.oss-cn-beijing.aliyuncs.com/20240321/4493a9c0a19b465b94e0e21a9ba72b53.docx',
-          '阿拉教师码用户隐私协议.docx'
+          'https://ddup-education.oss-cn-beijing.aliyuncs.com/commodity/%E9%98%BF%E6%8B%89%E6%95%99%E5%B8%88%E7%A0%81%E7%94%A8%E6%88%B7%E9%9A%90%E7%A7%81%E5%8D%8F%E8%AE%AE0425.pdf',
+          '阿拉教师码用户隐私协议.pdf'
         )
       "
       >《阿拉教师码用户隐私协议》</span
