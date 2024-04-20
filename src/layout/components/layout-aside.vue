@@ -42,7 +42,7 @@ const menuArr = computed<MenuItem[]>(() => {
     return [
       {
         id: 1,
-        label: "商户入驻",
+        label: "商户合作",
         router: "/entry-process",
         icon: House,
       },
