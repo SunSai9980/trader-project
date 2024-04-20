@@ -14,7 +14,7 @@ const routes: RouteRecordRaw[] = [
         path: "entry-process",
         name: "EntryProcess",
         meta: {
-          label: "入驻流程",
+          label: "合作流程",
         },
         component: () => import("@/views/entry-process/index.vue"),
       },

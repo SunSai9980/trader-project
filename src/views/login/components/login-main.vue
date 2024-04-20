@@ -16,7 +16,7 @@
       type="primary"
       class="m-auto !block mt-7"
       @click="$emit('onClick')"
-      >申请入驻</el-button
+      >申请合作</el-button
     >
   </div>
 </template>

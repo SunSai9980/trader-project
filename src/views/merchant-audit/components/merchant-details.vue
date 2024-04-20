@@ -18,12 +18,12 @@
             <el-tag
               type="success"
               v-else-if="detailInfo?.state! === State.ShortlistingSuccess"
-              >入驻成功</el-tag
+              >合作成功</el-tag
             >
             <el-tag
               type="danger"
               v-else-if="detailInfo?.state! === State.ShortlistingError"
-              >入驻失败</el-tag
+              >合作失败</el-tag
             >
           </div>
           <div>
@@ -45,7 +45,7 @@
               type="primary"
               v-if="detailInfo?.state! === State.successes"
               @click="dialogVisibleEntryAudit = true"
-              >入驻处理</el-button
+              >合作处理</el-button
             >
           </div>
         </div>
@@ -198,7 +198,7 @@
       </el-form-item>
     </el-form>
   </el-dialog>
-  <el-dialog v-model="dialogVisibleEntryAudit" title="入驻处理" width="500">
+  <el-dialog v-model="dialogVisibleEntryAudit" title="合作处理" width="500">
     <el-divider class="!mt-0" />
     <el-form
       ref="formDataEntryAuditTag"
@@ -208,7 +208,7 @@
       <el-form-item label="企业名称：">
         <div>{{ detailInfo?.enterpriseName }}</div>
       </el-form-item>
-      <el-form-item prop="state" label="是否入驻：">
+      <el-form-item prop="state" label="是否合作：">
         <el-radio-group v-model="formDataEntryAudit.state">
           <el-radio :value="State.ShortlistingSuccess">是</el-radio>
           <el-radio :value="State.ShortlistingError">否</el-radio>

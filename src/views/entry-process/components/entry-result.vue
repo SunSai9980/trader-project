@@ -36,7 +36,7 @@
     class="flex justify-center items-center flex-col py-20"
   >
     <el-icon size="60" color="#67C23A"><i-ep-success-filled /></el-icon>
-    <div class="mt-5 text-2xl font-bold">入驻成功</div>
+    <div class="mt-5 text-2xl font-bold">合作成功</div>
     <p class="mt-2 text-gray-400 text-sm">
       商户账号将以邮件形式发送到负责人邮箱，登录后请及时修改密码。
     </p>
@@ -44,9 +44,9 @@
   </div>
   <div v-else class="flex justify-center items-center flex-col py-20">
     <el-icon size="60" color="#F56C6C"><i-ep-circle-close-filled /></el-icon>
-    <div class="mt-5 text-2xl font-bold">入驻失败</div>
+    <div class="mt-5 text-2xl font-bold">合作失败</div>
     <p class="mt-2 text-gray-400 text-sm">
-      你提交的入驻申请被拒绝，可以重新发起申请。
+      你提交的合作申请被拒绝，可以重新发起申请。
     </p>
     <el-button type="primary" class="mt-5" @click="handleRevisitError"
       >重新发起</el-button

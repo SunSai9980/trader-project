@@ -6,11 +6,11 @@
         <div>{{ pendingNum }}个</div>
       </el-col>
       <el-col :span="8" class="text-center border-r-1 border-e-#e9e9e9">
-        <div class="text-xs text-#8d8d8d">入驻资格</div>
+        <div class="text-xs text-#8d8d8d">合作资格</div>
         <div>{{ passNum }}个</div></el-col
       >
       <el-col :span="8" class="text-center">
-        <div class="text-xs text-#8d8d8d">阳光福利入驻商户</div>
+        <div class="text-xs text-#8d8d8d">阳光福利合作商户</div>
         <div>{{ successesNum }}个</div></el-col
       >
     </el-row>
@@ -137,11 +137,11 @@ const options = reactive([
   },
   {
     value: State.ShortlistingError,
-    label: "未入驻",
+    label: "未合作",
   },
   {
     value: State.ShortlistingSuccess,
-    label: "已入驻",
+    label: "已合作",
   },
 ]);
 const stateMsg = (state: State) => {
@@ -153,9 +153,9 @@ const stateMsg = (state: State) => {
     case State.successes:
       return "已通过";
     case State.ShortlistingSuccess:
-      return "已入驻";
+      return "已合作";
     case State.ShortlistingError:
-      return "未入驻";
+      return "未合作";
     default:
       return "未提交核验资料";
   }

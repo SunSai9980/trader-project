@@ -2,7 +2,7 @@
   <div flex w-full flex-justify-between item-center>
     <div class="line-height-[32px]">阿拉教师码 | 合作平台</div>
     <div v-if="!user.id" text-right>
-      <span m-r class="center">申请入驻</span>
+      <span m-r class="center">申请合作</span>
       <el-button>登录</el-button>
     </div>
     <div v-else flex>
