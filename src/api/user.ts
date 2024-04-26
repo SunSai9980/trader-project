@@ -5,29 +5,52 @@ import type {
   ValidCode,
   User,
   IUserListParma,
+  IUserListData,
 } from "@/types";
+import { Md5 } from "ts-md5";
 
 /**
  * 登录/创建
  */
 export const apiLogin = (mobile: string) => {
-  return http.post<User>({ url: "/merchant/user/mobile/" + mobile });
+  return http.post<User>({
+    url: "/merchant/user/mobile/" + mobile,
+    headers: {
+      mobile: JSON.stringify(mobile),
+      keys: JSON.stringify(["mobile"]),
+      sign: Md5.hashStr(`mobile=${JSON.stringify(mobile)}Potato`),
+    },
+  });
 };
 
 /**
  * 查询用户
  */
 export const apiUserGet = (id: number) => {
-  return http.post<User>({ url: `/merchant/user/get/${id}` });
+  return http.post<User>({
+    url: `/merchant/user/get/${id}`,
+    headers: {
+      id,
+      keys: JSON.stringify(["id"]),
+      sign: Md5.hashStr(`id=${id}Potato`),
+    },
+  });
 };
 
 /**
  * 用户列表
  */
-export const apiUserList = (data: IUserListParma) => {
+export const apiUserList = (data: IUserListData) => {
+  let params: IUserListParma = {
+    current: data.current,
+    size: data.size,
+    descs: data.descs,
+  };
+  params.current = data.current;
   return http.post<ResRecordsData<Required<User>>>({
-    url: `/merchant/user/list?current=${data.current}&size=${data.size}&descs=${data.descs}`,
+    url: `/merchant/user/list`,
     data,
+    params,
   });
 };
 
@@ -56,5 +79,12 @@ export const apiUpdateUser = (data: User) => {
  * 删除用户（物理删除）
  */
 export const apiDelUser = (id: number) => {
-  return http.post({ url: `/merchant/user/del/${id}` });
+  return http.post({
+    url: `/merchant/user/del/${id}`,
+    headers: {
+      id: id,
+      keys: JSON.stringify(["id"]),
+      sign: Md5.hashStr(`id=${id}Potato`),
+    },
+  });
 };

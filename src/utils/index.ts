@@ -1,3 +1,6 @@
+import { Md5 } from "ts-md5";
+import { SECRET } from "@/enums";
+
 export const regEmail =
   /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
 export const validatorEmail = (_rule: any, value: any, callback: any) => {
@@ -57,4 +60,31 @@ export function download(blob: Blob, filename?: string) {
   a.click();
   a.remove();
   URL.revokeObjectURL(blobUrl);
+}
+
+export function sortASCII(
+  obj: Record<string, any>,
+  isSort: boolean = true
+): Record<string, any> {
+  let arr = Object.keys(obj);
+  let sortArr = isSort ? arr.sort() : arr.sort().reverse();
+  let sortObj: Record<string, any> = {};
+  for (let i of sortArr) {
+    sortObj[i] = obj[i];
+  }
+  return sortObj;
+}
+
+export function generateSign(obj: Record<string, any>): string {
+  return Object.keys(obj)
+    .map((key) => {
+      return `${key}=${obj[key] || "-"}`;
+    })
+    .join("&");
+}
+
+export function signMd5(obj: Record<string, any>): string {
+  let str = generateSign(obj);
+  str += SECRET;
+  return Md5.hashStr(str);
 }

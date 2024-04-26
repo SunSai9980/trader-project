@@ -33,12 +33,18 @@ export interface User {
   loginMobile?: string;
 }
 
-export interface IUserListParma {
+export interface IUserListData {
   deleted: boolean;
   current: number;
   size: number;
   enterpriseName?: string;
   states: State[];
   materialApplyState?: MaterialApplyState.fulfil;
+  descs: string;
+}
+
+export interface IUserListParma {
+  current: number;
+  size: number;
   descs: string;
 }

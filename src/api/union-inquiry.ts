@@ -8,6 +8,7 @@ import type {
   SupplierListItem,
   ResponseData,
 } from "@/types/union-inquiry";
+import { Md5 } from "ts-md5";
 
 /**
  * 创建询价
@@ -35,6 +36,11 @@ export const apiSupplierList = (data: SupplierWelfareListParams) => {
 export const apiSupplierGet = (id: number) => {
   return http.post({
     url: `/merchant/sunlight/welfare/get/${id}`,
+    headers: {
+      id: id,
+      keys: JSON.stringify(["id"]),
+      sign: Md5.hashStr(`id=id}Potato`),
+    },
   });
 };
 

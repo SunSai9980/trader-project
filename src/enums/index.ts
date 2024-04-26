@@ -10,3 +10,5 @@ export enum Open {
   open = 1,
   close = 0,
 }
+
+export const SECRET = "Potato";

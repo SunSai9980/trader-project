@@ -1,6 +1,9 @@
+import { Md5 } from "ts-md5";
 import axios from "axios";
 import type { AxiosInstance, AxiosRequestConfig } from "axios";
 import type { Result, ResultData } from "./types";
+import { sortASCII, signMd5 } from "../index";
+import { SECRET } from "@/enums";
 
 const defaultConfig: AxiosRequestConfig = {
   baseURL: import.meta.env.VITE_API_URL,
@@ -21,10 +24,16 @@ class Http {
     // 添加所有实例都有的请求拦截器
     this.instance.interceptors.request.use(
       (config) => {
-        const token = localStorage.getItem("token");
-        if (token) {
-          config.url = config.url + "?token=" + token;
+        if (config.data || config.params) {
+          let obj = sortASCII(config.data || config.params);
+          for (let key in obj) {
+            config.headers[key] = obj[key] || "-";
+          }
+          let sign = signMd5(obj);
+          config.headers.sign = sign;
+          config.headers.keys = JSON.stringify(Object.keys(obj));
         }
+        config.headers.sign = config.headers.sign || Md5.hashStr(SECRET);
         return config;
       },
       (error) => {
@@ -35,6 +44,7 @@ class Http {
     // 添加所有实例都有的响应拦截器
     this.instance.interceptors.response.use(
       (response) => {
+        ``;
         return response;
       },
       (error) => {
