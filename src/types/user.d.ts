@@ -1,4 +1,10 @@
-import { State, MaterialApplyState } from "@/enums";
+import {
+  State,
+  MaterialApplyState,
+  RiskType,
+  CooperateTime,
+  ServiceRange,
+} from "@/enums";
 import type { IBaseListParams } from "@/types";
 
 export interface ValidCode {
@@ -31,6 +37,11 @@ export interface User {
   state?: State;
   reason?: string;
   loginMobile?: string;
+  servicePrice?: number;
+  serviceJoinUserNum?: number;
+  serviceRange?: ServiceRange;
+  cooperateTime?: CooperateTime;
+  riskType?: RiskType;
 }
 
 export interface IUserListData {

@@ -27,27 +27,21 @@
   >
     <el-icon size="60" color="#67C23A"><i-ep-success-filled /></el-icon>
     <div class="mt-5 text-2xl font-bold">核验成功</div>
-    <p class="mt-2 text-gray-400 text-sm">
-      资料核验通过，线下评审时间将以短信形式通知负责人。
-    </p>
+    <p class="mt-2 text-gray-400 text-sm">您提交的资料已通过核验</p>
   </div>
   <div
     v-else-if="user.state === State.ShortlistingSuccess"
     class="flex justify-center items-center flex-col py-20"
   >
     <el-icon size="60" color="#67C23A"><i-ep-success-filled /></el-icon>
-    <div class="mt-5 text-2xl font-bold">合作成功</div>
-    <p class="mt-2 text-gray-400 text-sm">
-      商户账号将以邮件形式发送到负责人邮箱，登录后请及时修改密码。
-    </p>
+    <div class="mt-5 text-2xl font-bold">申请完成</div>
+    <p class="mt-2 text-gray-400 text-sm">您的合作申请已完成</p>
     <el-button type="primary" class="mt-5" @click="goLogin">前往登录</el-button>
   </div>
   <div v-else class="flex justify-center items-center flex-col py-20">
     <el-icon size="60" color="#F56C6C"><i-ep-circle-close-filled /></el-icon>
-    <div class="mt-5 text-2xl font-bold">合作失败</div>
-    <p class="mt-2 text-gray-400 text-sm">
-      你提交的合作申请被拒绝，可以重新发起申请。
-    </p>
+    <div class="mt-5 text-2xl font-bold">申请失败</div>
+    <p class="mt-2 text-gray-400 text-sm">您提交的申请被退回</p>
     <el-button type="primary" class="mt-5" @click="handleRevisitError"
       >重新发起</el-button
     >

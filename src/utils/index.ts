@@ -78,7 +78,7 @@ export function sortASCII(
 export function generateSign(obj: Record<string, any>): string {
   return Object.keys(obj)
     .map((key) => {
-      return `${key}=${obj[key] || "-"}`;
+      return `${key}=${encodeURIComponent(obj[key]) || "-"}`;
     })
     .join("&");
 }

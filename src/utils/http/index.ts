@@ -27,13 +27,14 @@ class Http {
         if (config.data || config.params) {
           let obj = sortASCII(config.data || config.params);
           for (let key in obj) {
-            config.headers[key] = obj[key] || "-";
+            config.headers[key] = encodeURIComponent(obj[key]) || "-";
           }
           let sign = signMd5(obj);
           config.headers.sign = sign;
           config.headers.keys = JSON.stringify(Object.keys(obj));
         }
         config.headers.sign = config.headers.sign || Md5.hashStr(SECRET);
+        config.headers.keys = config.headers.keys || JSON.stringify([]);
         return config;
       },
       (error) => {

@@ -175,10 +175,15 @@
             placeholder="请输入18位信用代码"
           />
         </el-form-item>
-        <el-form-item prop="operatePermit" label="食品经营许可证（需加盖公章）">
+        <el-form-item
+          prop="operatePermit"
+          label="食品经营许可证或其他特许经营许可证书（需加盖公章）"
+        >
           <entry-upload
             :fileList="fileList4"
             accept=".png,.jpg"
+            :multiple="true"
+            :limit="10"
             @on-success="handleOperatePermitSuccess"
             @before-upload="beforeUpload"
             @onRemove="handleOperatePermitRemove"
@@ -204,7 +209,7 @@
             v-show="iconArrowUp3"
           >
             <div class="text-sm">
-              请上传食品经营许可证执照照片或复印件，复印件需加盖公司公章，仅支持jpg、png格式
+              请上传食品经营许可证执照或其他特许经营许可证书照片或复印件，复印件需加盖公司公章，仅支持jpg、png格式
             </div>
             <div class="text-xs leading-7">
               1、图片需清晰、完整、无反光、无PS、无不相关水印、非拍屏
@@ -231,13 +236,14 @@
             placeholder="请输入"
           />
         </el-form-item>
-        <el-form-item prop="commitment" label="阳光福利商户承诺书">
+        <el-form-item prop="commitment" label="合作服务承诺登记书">
           <el-upload
             v-model:file-list="fileList5"
             class="upload-demo"
             ref="uploadTag"
             accept="pdf"
             :limit="1"
+            :headers="{ sign: Md5.hashStr(SECRET), keys: JSON.stringify([]) }"
             :action="UPLOAD_URL"
             :before-upload="beforeUploadPdf"
             :on-success="handleCommitmentSuccess"
@@ -255,8 +261,8 @@
               class="text-[#409EFF] text-xs cursor-pointer"
               @click="
                 downloadFile(
-                  'https://ddup-education.oss-cn-beijing.aliyuncs.com/20240326/8dc2f8680cd94722a15610b363ef2b02.docx',
-                  '模板承诺书.docx'
+                  'https://ddup-education.oss-cn-beijing.aliyuncs.com/file/%E9%98%BF%E6%8B%89%E6%95%99%E5%B8%88%E7%A0%81%E5%B9%B3%E5%8F%B0%E6%83%A0%E5%B8%88%E5%90%88%E4%BD%9C%E6%9C%8D%E5%8A%A1%E6%89%BF%E8%AF%BA%E7%99%BB%E8%AE%B0%E8%A1%A8%EF%BC%88%E5%A1%AB%E5%86%99%E8%8C%83%E4%BE%8B%EF%BC%89.xlsx',
+                  '模板承诺书.xlsx'
                 )
               "
               >《模板承诺书》</span
@@ -266,6 +272,50 @@
             2.支持 pdf 格式，文件大小不超过5M;
           </div>
         </div>
+        <el-form-item prop="servicePrice" label="服务金额">
+          <el-input-number
+            :step="1"
+            :precision="2"
+            v-model="materialsForm.servicePrice"
+            placeholder="请输入"
+          />元
+        </el-form-item>
+        <el-form-item prop="serviceJoinUserNum" label="服务参与人数">
+          <el-input-number
+            v-model="materialsForm.serviceJoinUserNum"
+            placeholder="请输入"
+          />人
+        </el-form-item>
+        <el-form-item prop="serviceRange" label="服务范围">
+          <el-select
+            v-model="materialsForm.serviceRange"
+            placeholder="请选择服务范围"
+            size="large"
+            style="width: 240px"
+          >
+            <el-option
+              v-for="item in serviceRangeOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item prop="cooperateTime" label="合作时间">
+          <el-select
+            v-model="materialsForm.cooperateTime"
+            placeholder="请选择合作时间"
+            size="large"
+            style="width: 240px"
+          >
+            <el-option
+              v-for="item in cooperateTimeOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
       </el-form>
       <div
         class="mt-6 py-3 px-10 shadow flex items-center fixed bottom-0 right-[20px] left-[220px] bg-#fff"
@@ -278,13 +328,15 @@
     <div v-else class="flex justify-center items-center flex-col pt-20">
       <el-icon size="60" color="#67C23A"><i-ep-success-filled /></el-icon>
       <div class="mt-5 text-2xl font-bold">提交成功</div>
-      <p class="mt-2 text-gray-400 text-sm">审核时间3-7个工作日</p>
+      <p class="mt-2 text-gray-400 text-sm">请等待审核</p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import entryUpload from "./entry-upload.vue";
+import { Md5 } from "ts-md5";
+import { SECRET, RiskType, CooperateTime, ServiceRange } from "@/enums";
 import type { ResultData } from "@/utils/http/types";
 import {
   type FormInstance,
@@ -304,6 +356,7 @@ import {
 import { State, MaterialApplyState } from "@/enums";
 import { apiUpdateUser } from "@/api/user";
 import { UPLOAD_URL } from "@/constants";
+import { User } from "@/types";
 interface Materials {
   id: number;
   name: string;
@@ -314,12 +367,39 @@ interface Materials {
   idCardOpposite: string;
   businessLicense: string;
   creditCode: string;
-  operatePermit: string;
+  operatePermit: { name: string; url: string }[] | string;
   recommendUser: string;
   commitment: string;
   state: State;
   materialApplyState: MaterialApplyState;
+  servicePrice: number;
+  serviceJoinUserNum: number;
+  serviceRange: ServiceRange;
+  cooperateTime: CooperateTime;
+  riskType?: RiskType;
 }
+
+const serviceRangeOptions = [
+  {
+    label: "区级及以上",
+    value: ServiceRange.aboveDistrictLevel,
+  },
+  {
+    label: "区级以下基层工会",
+    value: ServiceRange.belowDistrictLevel,
+  },
+];
+
+const cooperateTimeOptions = [
+  {
+    label: "三个月以上",
+    value: CooperateTime.moreThanThreeMonths,
+  },
+  {
+    label: "三个月以下",
+    value: CooperateTime.lessThanThreeMonths,
+  },
+];
 
 const loading = ref(false);
 const urlList = reactive<string[]>([
@@ -359,11 +439,15 @@ const materialsForm = reactive<Materials>({
   idCardOpposite: user.idCardOpposite!,
   businessLicense: user.businessLicense!,
   creditCode: user.creditCode!,
-  operatePermit: user.operatePermit!,
+  operatePermit: user.operatePermit! || [],
   recommendUser: user.recommendUser!,
   commitment: user.commitment!,
   state: State.declare,
   materialApplyState: MaterialApplyState.fulfil,
+  servicePrice: user.servicePrice!,
+  serviceJoinUserNum: user.serviceJoinUserNum!,
+  serviceRange: user.serviceRange!,
+  cooperateTime: user.cooperateTime!,
 });
 
 const materialsRules = reactive<FormRules<Materials>>({
@@ -423,10 +507,31 @@ const materialsRules = reactive<FormRules<Materials>>({
       trigger: "blur",
     },
   ],
-  operatePermit: [
+  servicePrice: [
     {
       required: true,
-      message: "请上传经营许可证",
+      message: "请输入服务金额",
+      trigger: "blur",
+    },
+  ],
+  serviceJoinUserNum: [
+    {
+      required: true,
+      message: "请输入服务参与人数",
+      trigger: "blur",
+    },
+  ],
+  serviceRange: [
+    {
+      required: true,
+      message: "请选择服务范围",
+      trigger: "blur",
+    },
+  ],
+  cooperateTime: [
+    {
+      required: true,
+      message: "请选择合作时间",
       trigger: "blur",
     },
   ],
@@ -486,7 +591,6 @@ const handleCommitmentSuccess: UploadProps["onSuccess"] = (
 const handleCommitmentPreview: UploadProps["onPreview"] = (
   uploadFile: UploadFile
 ) => {
-  console.log("onPreview", uploadFile);
   if (uploadFile.response) {
     downloadFile((uploadFile.response as ResultData).message, uploadFile.name);
   } else {
@@ -494,7 +598,18 @@ const handleCommitmentPreview: UploadProps["onPreview"] = (
   }
 };
 const handleOperatePermitSuccess: UploadProps["onSuccess"] = (response) => {
-  materialsForm.operatePermit = response.message;
+  if (Array.isArray(materialsForm.operatePermit)) {
+    materialsForm.operatePermit.push(response);
+  } else {
+    try {
+      materialsForm.operatePermit = JSON.parse(materialsForm.operatePermit);
+      if (Array.isArray(materialsForm.operatePermit)) {
+        materialsForm.operatePermit.push(response);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
 };
 const handleBusinessLicenseSuccess: UploadProps["onSuccess"] = (response) => {
   materialsForm.businessLicense = response.message;
@@ -525,9 +640,12 @@ const handleCommitmentRemove: UploadProps["onRemove"] = (
 };
 const handleOperatePermitRemove: UploadProps["onRemove"] = (
   _uploadFile,
-  _uploadFiles
+  uploadFiles
 ) => {
-  materialsForm.operatePermit = "";
+  materialsForm.operatePermit = uploadFiles.map((it) => ({
+    name: it.name,
+    url: (it.response as { message: string }).message!,
+  }));
 };
 
 const handleSubmit = async (formEl: FormInstance | undefined) => {
@@ -541,12 +659,27 @@ const handleSubmit = async (formEl: FormInstance | undefined) => {
       })
         .then(async () => {
           try {
-            await apiUpdateUser(materialsForm);
+            if (
+              materialsForm.servicePrice >= 5000 ||
+              materialsForm.serviceJoinUserNum >= 1000 ||
+              materialsForm.serviceRange === ServiceRange.aboveDistrictLevel ||
+              materialsForm.cooperateTime === CooperateTime.moreThanThreeMonths
+            ) {
+              materialsForm.riskType = RiskType.highRisk;
+            } else {
+              materialsForm.riskType = RiskType.loweRisk;
+            }
+            if (typeof materialsForm.operatePermit !== "string") {
+              materialsForm.operatePermit = JSON.stringify(
+                materialsForm.operatePermit
+              );
+            }
+            await apiUpdateUser(materialsForm as User);
             ElMessage({
               type: "success",
               message: "提交成功",
             });
-            user.$state = { ...user, ...materialsForm };
+            user.$state = { ...user, ...(materialsForm as User) };
             emits("stepNext", State.declare, MaterialApplyState.fulfil);
           } catch (e) {
             console.error(e);
@@ -589,24 +722,28 @@ onMounted(() => {
       },
     ];
   }
+  if (user.commitment) {
+    try {
+      fileList5.value = JSON.parse(user.commitment);
+    } catch (_e) {
+      fileList5.value = [
+        {
+          name: "承诺书",
+          url: user.commitment,
+        },
+      ];
+    }
+  }
   if (user.operatePermit) {
-    fileList4.value = [
-      {
-        name: "4.pmg",
-        url: user.operatePermit,
-      },
-    ];
-    if (user.commitment) {
-      try {
-        fileList5.value = JSON.parse(user.commitment);
-      } catch (_e) {
-        fileList5.value = [
-          {
-            name: "承诺书",
-            url: user.commitment,
-          },
-        ];
-      }
+    try {
+      fileList4.value = JSON.parse(user.operatePermit);
+    } catch (_e) {
+      fileList3.value = [
+        {
+          name: "4.png",
+          url: user.operatePermit,
+        },
+      ];
     }
   }
   loading.value = true;

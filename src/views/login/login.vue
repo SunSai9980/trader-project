@@ -89,8 +89,8 @@ const rules = reactive<FormRules<LoginForm>>({
 });
 
 const loginForm = reactive<LoginForm>({
-  mobile: "19912345678", //
-  code: "246810", //
+  mobile: "", // 19912345678
+  code: "", // 246810
 });
 
 const submitForm = async (formEl: FormInstance | undefined) => {

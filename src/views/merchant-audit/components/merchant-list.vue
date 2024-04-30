@@ -10,7 +10,7 @@
         <div>{{ passNum }}个</div></el-col
       >
       <el-col :span="8" class="text-center">
-        <div class="text-xs text-#8d8d8d">阳光福利合作商户</div>
+        <div class="text-xs text-#8d8d8d">合作商户</div>
         <div>{{ successesNum }}个</div></el-col
       >
     </el-row>
@@ -59,8 +59,13 @@
             {{ dayjs(scope.row.modifyTime).format("YYYY-MM-DD HH:mm:ss") }}
           </template>
         </el-table-column>
-        <el-table-column label="状态">
+        <el-table-column label="状态" prop="state">
           <template #default="scope">{{ stateMsg(scope.row.state) }} </template>
+        </el-table-column>
+        <el-table-column label="风险类型" prop="riskType">
+          <template #default="scope">{{
+            scope.row.riskType === 1 ? "高风险" : "低风险"
+          }}</template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="120">
           <template #default="scope">

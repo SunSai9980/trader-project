@@ -126,6 +126,58 @@
             </div>
           </el-col>
         </el-row>
+        <el-row class="mt-5" :gutter="10">
+          <el-col :span="8">
+            <div class="flex text-sm">
+              <div>服务金额：</div>
+              <div class="text-#5a5a5a">
+                {{ detailInfo!.servicePrice || "-" }}
+              </div>
+            </div>
+          </el-col>
+          <el-col :span="8">
+            <div class="flex text-sm">
+              <div>服务参与人数：</div>
+              <div class="text-#5a5a5a">
+                {{ detailInfo!.serviceJoinUserNum || "-" }}
+              </div>
+            </div>
+          </el-col>
+          <el-col :span="8">
+            <div class="flex text-sm">
+              <div>服务范围：</div>
+              <div class="text-#5a5a5a">
+                {{ serviceRange }}
+              </div>
+            </div>
+          </el-col>
+        </el-row>
+        <el-row class="mt-5" :gutter="10">
+          <el-col :span="8">
+            <div class="flex text-sm">
+              <div>合作时间：</div>
+              <div class="text-#5a5a5a">{{ cooperateTime }}</div>
+            </div>
+          </el-col>
+          <el-col :span="8">
+            <div class="flex text-sm">
+              <div>风险类型：</div>
+              <div class="text-#5a5a5a">{{ riskType }}</div>
+            </div>
+          </el-col>
+          <el-col :span="8">
+            <div class="flex text-sm">
+              <div class="w-[140px]">合作服务承诺登记书：</div>
+              <span
+                class="text-[#409EFF] cursor-pointer"
+                v-for="(item, index) in commitment"
+                :key="index"
+                @click="downloadFile(item.url, item.name)"
+                >{{ item.name }}</span
+              >
+            </div>
+          </el-col>
+        </el-row>
         <el-row class="mt-8 pb-20">
           <el-col :span="8">
             <div class="flex text-sm">
@@ -142,31 +194,22 @@
               />
             </div>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="16">
             <div class="flex text-sm">
-              <div>食品经营许可证：</div>
+              <div>食品经营许可证或其他特许经营许可证书（需加盖公章）：</div>
               <el-image
+                class="mr-3"
+                v-for="(_item, idex) in operatePermit"
+                :key="idex"
                 style="width: 150px; height: 150px"
-                :src="srcList[3]"
+                :src="srcList[3 + idex]"
                 :zoom-rate="1.2"
                 :max-scale="7"
                 :min-scale="0.2"
                 :preview-src-list="srcList"
-                :initial-index="3"
+                :initial-index="3 + idex"
                 fit="cover"
               />
-            </div>
-          </el-col>
-          <el-col :span="8">
-            <div class="flex text-sm">
-              <div class="w-[140px]">阳光福利商户承诺书：</div>
-              <span
-                class="text-[#409EFF] cursor-pointer"
-                v-for="(item, index) in commitment"
-                :key="index"
-                @click="downloadFile(item.url, item.name)"
-                >{{ item.name }}</span
-              >
             </div>
           </el-col>
         </el-row>
@@ -232,10 +275,11 @@
 import EntryAgreement from "../../entry-process/components/entry-agreement.vue";
 import { WarningFilled } from "@element-plus/icons-vue";
 import type { User } from "@/types";
-import { State } from "@/enums";
+import { State, RiskType, CooperateTime, ServiceRange } from "@/enums";
 import { downloadFile } from "@/utils";
 import { apiUpdateUser } from "@/api/user";
 import type { FormInstance, FormRules } from "element-plus";
+import { computed } from "vue";
 
 const emits = defineEmits([
   "goList",
@@ -251,12 +295,60 @@ const props = defineProps<{
   pendingNum: number;
 }>();
 
+const riskType = computed(() => {
+  if (props.detailInfo!.riskType) {
+    switch (props.detailInfo!.riskType) {
+      case RiskType.highRisk:
+        return "高风险";
+      case RiskType.loweRisk:
+        return "低风险";
+    }
+  } else {
+    return "-";
+  }
+});
+const cooperateTime = computed(() => {
+  if (props.detailInfo!.cooperateTime) {
+    switch (props.detailInfo!.cooperateTime) {
+      case CooperateTime.moreThanThreeMonths:
+        return "三个月以上";
+      case CooperateTime.lessThanThreeMonths:
+        return "三个月以下";
+    }
+  } else {
+    return "-";
+  }
+});
+const serviceRange = computed(() => {
+  if (props.detailInfo!.serviceRange) {
+    switch (props.detailInfo!.serviceRange) {
+      case ServiceRange.aboveDistrictLevel:
+        return "区级及以上";
+      case ServiceRange.belowDistrictLevel:
+        return "区级以下基层工会";
+    }
+  } else {
+    return "-";
+  }
+});
+let operatePermit: string[] = [];
+if (props.detailInfo?.operatePermit) {
+  try {
+    operatePermit = JSON.parse(props.detailInfo?.operatePermit).map(
+      (it: { name: string; url: string }) => it.url
+    );
+  } catch (e) {
+    operatePermit = [props.detailInfo?.operatePermit];
+  }
+}
+
 const srcList = reactive<string[]>([
   props.detailInfo?.idCardFront!,
   props.detailInfo?.idCardOpposite!,
   props.detailInfo?.businessLicense!,
-  props.detailInfo?.operatePermit!,
+  ...operatePermit,
 ]);
+console.log(srcList);
 
 let commitment = ref<{ name: string; url: string }[]>([{ name: "", url: "" }]);
 try {
@@ -292,13 +384,17 @@ const handlePass = () => {
     type: "warning",
     icon: markRaw(WarningFilled),
   }).then(() => {
+    const state =
+      props.detailInfo!.riskType === RiskType.loweRisk
+        ? State.ShortlistingSuccess
+        : State.successes;
     apiUpdateUser({
       id: props.detailInfo?.id!,
-      state: State.successes,
+      state,
     }).then(() => {
       emits("subNum", props.detailInfo?.state);
-      emits("addNum", State.successes);
-      emits("updateDetailInfoState", State.successes);
+      emits("addNum", state);
+      emits("updateDetailInfoState", state);
       ElMessage({
         type: "success",
         message: "核验通过成功",

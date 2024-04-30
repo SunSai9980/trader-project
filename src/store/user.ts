@@ -27,6 +27,11 @@ export const useUserInfo = defineStore("userInfo", {
       recommendUser: undefined,
       reason: undefined,
       loginMobile: undefined,
+      servicePrice: undefined,
+      serviceJoinUserNum: undefined,
+      serviceRange: undefined,
+      cooperateTime: undefined,
+      riskType: undefined,
     };
   },
   getters: {},
