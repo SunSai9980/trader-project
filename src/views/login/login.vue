@@ -3,14 +3,14 @@
     <LoginNav @onClick="dialogVisible = true" />
     <LoginMain @onClick="dialogVisible = true" />
   </div>
-  <el-dialog v-model="dialogVisible" width="500">
+  <el-dialog v-model="dialogVisible" class="important-w-70 sm:important-w-50%">
     <div class="text-center text-lg">登录</div>
     <el-form
       :model="loginForm"
       ref="formTag"
       :rules="rules"
       label-width="0px"
-      class="m-auto w-[300px] mt-4"
+      class="m-auto sm:w-[300px] sm:mt-4"
     >
       <el-form-item prop="mobile">
         <el-input
@@ -32,7 +32,7 @@
             <el-button
               @click="sendCode"
               :disabled="isSending"
-              class="w-30 block"
+              class="sm:w-30 block"
               >{{ codeText }}</el-button
             >
           </el-col>
@@ -42,7 +42,7 @@
         <el-button
           type="primary"
           size="large"
-          class="block w-full mt-3"
+          class="block w-full sm:mt-3"
           @click="submitForm(formTag)"
           :loading="loading"
           >登 录</el-button
@@ -60,8 +60,9 @@ import type { FormRules, FormInstance } from "element-plus";
 import { validatorMobile, regPhone } from "@/utils";
 import { Message, Iphone } from "@element-plus/icons-vue";
 import { apiLogin, apiSendCode, apiOnlyValidCode } from "@/api/user";
-import { useUserInfo } from "@/store";
-import { useRouter } from "vue-router";
+import { useUserInfo, useInvitationInfo } from "@/store";
+import { useRouter, useRoute } from "vue-router";
+import type { InvitationInfo } from "@/types";
 
 interface LoginForm {
   mobile: string;
@@ -69,6 +70,9 @@ interface LoginForm {
 }
 
 const router = useRouter();
+const route = useRoute();
+const invitationInfo = useInvitationInfo();
+const query = route.query as unknown as InvitationInfo;
 const user = useUserInfo();
 const dialogVisible = ref<boolean>(false);
 const loading = ref<boolean>(false);
@@ -105,6 +109,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         });
         const { data } = await apiLogin(loginForm.mobile);
         user.$state = data;
+        invitationInfo.$state = query;
         loading.value = false;
         dialogVisible.value = false;
         router.replace("/");

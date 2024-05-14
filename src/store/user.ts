@@ -39,8 +39,5 @@ export const useUserInfo = defineStore("userInfo", {
     initUserInfo(data: User) {
       this.$state = data;
     },
-    // setUserInfo<K extends keyof User>(key: K, value: User[K]) {
-    //   this.$[key] = value;
-    // },
   },
 });

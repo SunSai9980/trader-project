@@ -8,7 +8,7 @@
       <div class="px-4 text-sm text-neutral-500">升级体验</div>
     </div>
     <img
-      class="mt-10 w-[999px] m-auto block"
+      class="mt-10 w-4/5 sm:w-[999px] m-auto block"
       src="../../../assets/images/login/workflows.png"
       alt="流程图"
     />

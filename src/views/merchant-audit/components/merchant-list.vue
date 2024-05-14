@@ -54,6 +54,11 @@
         <el-table-column fixed prop="enterpriseName" label="企业名称" />
         <el-table-column prop="name" label="负责人" width="120" />
         <el-table-column prop="loginMobile" label="负责人手机号" width="120" />
+        <el-table-column label="推荐人" prop="recommendUser">
+          <template #default="scope">{{
+            scope.row.recommendUser || "-"
+          }}</template>
+        </el-table-column>
         <el-table-column label="更新时间" prop="modifyTime" width="180">
           <template #default="scope">
             {{ dayjs(scope.row.modifyTime).format("YYYY-MM-DD HH:mm:ss") }}
@@ -64,7 +69,11 @@
         </el-table-column>
         <el-table-column label="风险类型" prop="riskType">
           <template #default="scope">{{
-            scope.row.riskType === 1 ? "高风险" : "低风险"
+            scope.row.riskType === RiskType.highRisk
+              ? "高风险"
+              : scope.row.riskType === RiskType.loweRisk
+              ? "低风险"
+              : "-"
           }}</template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="120">
@@ -106,7 +115,7 @@
 <script setup lang="ts">
 import zhCn from "element-plus/es/locale/lang/zh-cn";
 import { Search } from "@element-plus/icons-vue";
-import { State } from "@/enums";
+import { RiskType, State } from "@/enums";
 import type { MerchantForm, User } from "@/types";
 import { apiDelUser, apiUserList } from "@/api/user";
 import { MaterialApplyState } from "@/enums";

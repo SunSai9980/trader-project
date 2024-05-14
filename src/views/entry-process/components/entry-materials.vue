@@ -346,7 +346,7 @@ import {
   type UploadUserFile,
   type UploadInstance,
 } from "element-plus";
-import { useUserInfo } from "@/store";
+import { useUserInfo, useInvitationInfo } from "@/store";
 import {
   validatorMobile,
   validatorEmail,
@@ -355,8 +355,10 @@ import {
 } from "@/utils";
 import { State, MaterialApplyState } from "@/enums";
 import { apiUpdateUser } from "@/api/user";
+import { apiUseCode } from "@/api/common";
 import { UPLOAD_URL } from "@/constants";
 import { User } from "@/types";
+
 interface Materials {
   id: number;
   name: string;
@@ -410,6 +412,7 @@ const urlList = reactive<string[]>([
 ]);
 const emits = defineEmits(["stepNext"]);
 let user = useUserInfo();
+let invitationInfo = useInvitationInfo();
 const iconArrowUp1 = ref(true);
 const handleArrowUp1 = () => {
   iconArrowUp1.value = !iconArrowUp1.value;
@@ -440,7 +443,7 @@ const materialsForm = reactive<Materials>({
   businessLicense: user.businessLicense!,
   creditCode: user.creditCode!,
   operatePermit: user.operatePermit! || [],
-  recommendUser: user.recommendUser!,
+  recommendUser: user.recommendUser! || invitationInfo.recommendUser,
   commitment: user.commitment!,
   state: State.declare,
   materialApplyState: MaterialApplyState.fulfil,
@@ -675,6 +678,9 @@ const handleSubmit = async (formEl: FormInstance | undefined) => {
               );
             }
             await apiUpdateUser(materialsForm as User);
+            if (invitationInfo.code) {
+              await apiUseCode(invitationInfo.code);
+            }
             ElMessage({
               type: "success",
               message: "提交成功",

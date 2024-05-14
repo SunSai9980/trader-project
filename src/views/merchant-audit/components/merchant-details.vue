@@ -269,6 +269,29 @@
       </el-form-item>
     </el-form>
   </el-dialog>
+  <el-dialog v-model="dialogVisibleExamine" title="核验资料" width="500">
+    <el-divider class="!mt-0" />
+    <div class="flex flex-items-center">
+      <el-icon color="#faad14" size="32" class="mr-3"
+        ><WarningFilled
+      /></el-icon>
+      <span class="font-semibold">是否确认该企业的资料核验通过？</span>
+    </div>
+    <el-form :model="formDataPass" class="mt-2">
+      <el-form-item prop="riskType" label="风险类型：">
+        <el-radio-group v-model="formDataPass.riskType">
+          <el-radio :value="RiskType.loweRisk">低风险</el-radio>
+          <el-radio :value="RiskType.highRisk">高风险</el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item class="!mb-0">
+        <div class="flex justify-end w-full">
+          <el-button @click="dialogVisibleExamine = false">取 消</el-button>
+          <el-button type="primary" @click="handlePass">确 定</el-button>
+        </div>
+      </el-form-item>
+    </el-form>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -348,7 +371,6 @@ const srcList = reactive<string[]>([
   props.detailInfo?.businessLicense!,
   ...operatePermit,
 ]);
-console.log(srcList);
 
 let commitment = ref<{ name: string; url: string }[]>([{ name: "", url: "" }]);
 try {
@@ -379,28 +401,33 @@ const active = computed(() => {
   }
 });
 
-const handlePass = () => {
-  ElMessageBox.confirm("是否确认该企业的资料核验通过？", {
-    type: "warning",
-    icon: markRaw(WarningFilled),
+const dialogVisibleExamine = ref(false);
+const formDataPass = reactive<{ riskType: RiskType }>({
+  riskType: props.detailInfo!.riskType || RiskType.loweRisk,
+});
+const handlePass = async () => {
+  // ElMessageBox.confirm("是否确认该企业的资料核验通过？", {
+  //   type: "warning",
+  //   icon: markRaw(WarningFilled),
+  // }).then(() => {
+  const state =
+    props.detailInfo!.riskType === RiskType.loweRisk
+      ? State.ShortlistingSuccess
+      : State.successes;
+  apiUpdateUser({
+    id: props.detailInfo?.id!,
+    state,
+    riskType: formDataPass.riskType,
   }).then(() => {
-    const state =
-      props.detailInfo!.riskType === RiskType.loweRisk
-        ? State.ShortlistingSuccess
-        : State.successes;
-    apiUpdateUser({
-      id: props.detailInfo?.id!,
-      state,
-    }).then(() => {
-      emits("subNum", props.detailInfo?.state);
-      emits("addNum", state);
-      emits("updateDetailInfoState", state);
-      ElMessage({
-        type: "success",
-        message: "核验通过成功",
-      });
+    emits("subNum", props.detailInfo?.state);
+    emits("addNum", state);
+    emits("updateDetailInfoState", state);
+    ElMessage({
+      type: "success",
+      message: "核验通过成功",
     });
   });
+  // });
 };
 
 const dialogVisible = ref(false);

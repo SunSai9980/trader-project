@@ -16,9 +16,9 @@ export const apiLogin = (mobile: string) => {
   return http.post<User>({
     url: "/merchant/user/mobile/" + mobile,
     headers: {
-      mobile: JSON.stringify(mobile),
+      mobile: mobile,
       keys: JSON.stringify(["mobile"]),
-      sign: Md5.hashStr(`mobile=${JSON.stringify(mobile)}Potato`),
+      sign: Md5.hashStr(`mobile=${mobile}Potato`),
     },
   });
 };
