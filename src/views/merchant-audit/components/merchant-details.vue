@@ -31,7 +31,7 @@
             <el-button
               type="primary"
               v-if="detailInfo?.state! === State.declare"
-              @click="handlePass"
+              @click="dialogVisibleExamine = true"
               >通过</el-button
             >
             <el-button
@@ -403,7 +403,7 @@ const active = computed(() => {
 
 const dialogVisibleExamine = ref(false);
 const formDataPass = reactive<{ riskType: RiskType }>({
-  riskType: props.detailInfo!.riskType || RiskType.loweRisk,
+  riskType: props.detailInfo!.riskType || RiskType.highRisk,
 });
 const handlePass = async () => {
   // ElMessageBox.confirm("是否确认该企业的资料核验通过？", {
@@ -411,7 +411,7 @@ const handlePass = async () => {
   //   icon: markRaw(WarningFilled),
   // }).then(() => {
   const state =
-    props.detailInfo!.riskType === RiskType.loweRisk
+    formDataPass.riskType === RiskType.loweRisk
       ? State.ShortlistingSuccess
       : State.successes;
   apiUpdateUser({
@@ -426,6 +426,7 @@ const handlePass = async () => {
       type: "success",
       message: "核验通过成功",
     });
+    dialogVisibleExamine.value = false;
   });
   // });
 };

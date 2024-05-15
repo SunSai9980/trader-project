@@ -18,13 +18,13 @@
   <div class="pb-3">
     <div class="px-8 py-5 font-bold border-b border-b-#e9e9e9">记录列表</div>
     <div class="p-5">
-      <el-form :model="formData" class="flex items-center flex-wrap">
+      <el-form class="flex items-center flex-wrap">
         <el-form-item label="企业名称：" class="mr-2">
-          <el-input v-model="formData.enterpriseName" placeholder="请输入" />
+          <el-input v-model="enterpriseName" placeholder="请输入" />
         </el-form-item>
         <el-form-item label="状态：" class="mr-2">
           <el-select
-            v-model="formData.state"
+            v-model="state"
             placeholder="请选择"
             style="width: 240px"
             :clearable="true"
@@ -64,10 +64,10 @@
             {{ dayjs(scope.row.modifyTime).format("YYYY-MM-DD HH:mm:ss") }}
           </template>
         </el-table-column>
-        <el-table-column label="状态" prop="state">
+        <el-table-column label="状态" prop="state" width="100">
           <template #default="scope">{{ stateMsg(scope.row.state) }} </template>
         </el-table-column>
-        <el-table-column label="风险类型" prop="riskType">
+        <el-table-column label="风险类型" prop="riskType" width="100">
           <template #default="scope">{{
             scope.row.riskType === RiskType.highRisk
               ? "高风险"
@@ -116,7 +116,7 @@
 import zhCn from "element-plus/es/locale/lang/zh-cn";
 import { Search } from "@element-plus/icons-vue";
 import { RiskType, State } from "@/enums";
-import type { MerchantForm, User } from "@/types";
+import type { User } from "@/types";
 import { apiDelUser, apiUserList } from "@/api/user";
 import { MaterialApplyState } from "@/enums";
 import dayjs from "dayjs";
@@ -135,6 +135,11 @@ const emits = defineEmits([
   "updateDetailInfoState",
 ]);
 const spacer = h(ElDivider, { direction: "vertical" });
+const enterpriseName = defineModel<string>("enterpriseName");
+const state = defineModel<State | undefined>("state");
+const currentPage = defineModel<number>("currentPage", { default: 1 });
+const pageSize = defineModel<number>("pageSize", { default: 10 });
+const total = defineModel<number>("total", { default: 0 });
 
 const options = reactive([
   {
@@ -175,22 +180,25 @@ const stateMsg = (state: State) => {
   }
 };
 
-const formData = reactive<MerchantForm>({
-  enterpriseName: "",
-  state: undefined,
-});
+// const formData = reactive<MerchantForm>({
+//   enterpriseName: "",
+//   state: undefined,
+// });
 const tableData = ref<Required<User>[]>([]);
-const currentPage = ref(1);
-const pageSize = ref(10);
-const total = ref(0);
+// const currentPage = ref(1);
+// const pageSize = ref(10);
+// const total = ref(0);
 const handleSizeChange = async (val: number) => {
   pageSize.value = val;
-  await getList();
+  nextTick(async () => {
+    await getList();
+  });
 };
 const handleCurrentChange = async (val: number) => {
-  console.log(val);
   currentPage.value = val;
-  await getList();
+  nextTick(async () => {
+    await getList();
+  });
 };
 const handleRemove = async (data: Required<User>) => {
   await apiDelUser(data.id);
@@ -200,8 +208,8 @@ const handleRemove = async (data: Required<User>) => {
 };
 const getList = async (all: boolean = false) => {
   if (all) {
-    formData.state = undefined;
-    formData.enterpriseName = "";
+    state.value = undefined;
+    enterpriseName.value = "";
   }
   const {
     data: { records, total: allNum },
@@ -211,15 +219,15 @@ const getList = async (all: boolean = false) => {
     current: currentPage.value,
     size: pageSize.value,
     descs: "modify_time",
-    enterpriseName: formData.enterpriseName,
-    states: formData.state ? [formData.state] : [2, 3, 4, 5, 6],
+    enterpriseName: enterpriseName.value,
+    states: state.value ? [state.value] : [2, 3, 4, 5, 6],
   });
   total.value = allNum;
   tableData.value = records;
 };
 
 onMounted(async () => {
-  await getList(true);
+  await getList();
 });
 </script>
 

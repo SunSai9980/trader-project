@@ -73,6 +73,8 @@ const router = useRouter();
 const route = useRoute();
 const invitationInfo = useInvitationInfo();
 const query = route.query as unknown as InvitationInfo;
+query.recommendUser = decodeURI(window.atob(query.recommendUser));
+console.log(query);
 const user = useUserInfo();
 const dialogVisible = ref<boolean>(false);
 const loading = ref<boolean>(false);

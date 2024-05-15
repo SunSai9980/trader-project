@@ -11,6 +11,10 @@
     </div>
     <component
       :is="component"
+      v-model:state="state"
+      v-model:currentPage="currentPage"
+      v-model:pageSize="pageSize"
+      v-model:total="total"
       @goDetail="goDetail"
       @goList="goList"
       :detailInfo="detailInfo"
@@ -22,11 +26,16 @@
 import UnionList from "./components/union-list.vue";
 import UnionDetails from "./components/union-details.vue";
 import type { SupplierWelfareItem } from "@/types/union-inquiry";
+import { InquiryStatus } from "@/enums";
 
 const component = shallowRef(UnionList);
 const detailInfo = ref<SupplierWelfareItem>();
+const state = ref<InquiryStatus | undefined>();
+const currentPage = ref<number>(1);
+const pageSize = ref<number>(10);
+const total = ref<number>(0);
 const goDetail = (data: SupplierWelfareItem) => {
-  component.value = UnionDetails;
+  component.value = UnionDetails as unknown as typeof UnionList;
   detailInfo.value = data;
 };
 const goList = () => {

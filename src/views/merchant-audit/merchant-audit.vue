@@ -2,6 +2,11 @@
   <component
     :detailInfo="detailInfo!"
     :is="components"
+    v-model:enterprise-name="enterpriseName"
+    v-model:state="state"
+    v-model:currentPage="currentPage"
+    v-model:pageSize="pageSize"
+    v-model:total="total"
     @goList="goList"
     @goDetails="goDetails"
     :passNum="passNum"
@@ -22,12 +27,17 @@ import { MaterialApplyState, State } from "@/enums";
 
 const components = shallowRef(MerchantList);
 const detailInfo = ref<Required<User>>();
+const enterpriseName = ref<string>("");
+const state = ref<State | undefined>(undefined);
+const currentPage = ref<number>(1);
+const pageSize = ref<number>(10);
+const total = ref<number>(0);
 
 const goList = () => {
   components.value = MerchantList;
 };
 const goDetails = (data: Required<User>) => {
-  components.value = MerchantDetails;
+  components.value = MerchantDetails as unknown as typeof MerchantList;
   detailInfo.value = data;
 };
 const pendingNum = ref<number>(0);

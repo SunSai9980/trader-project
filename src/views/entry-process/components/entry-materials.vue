@@ -241,7 +241,7 @@
             v-model:file-list="fileList5"
             class="upload-demo"
             ref="uploadTag"
-            accept="pdf"
+            accept=".pdf"
             :limit="1"
             :headers="{ sign: Md5.hashStr(SECRET), keys: JSON.stringify([]) }"
             :action="UPLOAD_URL"

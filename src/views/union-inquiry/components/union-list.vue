@@ -93,18 +93,22 @@ const stateTime = (end: Date) => {
 
 const user = useUserInfo();
 const emits = defineEmits(["goDetail", "goList"]);
-const state = ref();
+const state = defineModel<InquiryStatus | undefined>("state");
 const tableData = ref<SupplierWelfareItem[]>([]);
-const currentPage = ref(1);
-const pageSize = ref(10);
-const total = ref<number>(0);
+const currentPage = defineModel<number>("currentPage", { default: 1 });
+const pageSize = defineModel<number>("pageSize", { default: 10 });
+const total = defineModel<number>("total", { default: 0 });
 const handleSizeChange = async (val: number) => {
   pageSize.value = val;
-  await getList();
+  nextTick(async () => {
+    await getList();
+  });
 };
 const handleCurrentChange = async (val: number) => {
   currentPage.value = val;
-  await getList();
+  nextTick(async () => {
+    await getList();
+  });
 };
 const goDetails = (data: SupplierWelfareItem) => {
   emits("goDetail", data);
@@ -119,8 +123,10 @@ const getList = async () => {
     state: state.value,
     open: Open.open,
   });
-  total.value = data.total;
-  tableData.value = data.list;
+  if (data) {
+    total.value = data.total || 0;
+    tableData.value = data.list;
+  }
 };
 const getListAll = async () => {
   const { data } = await apiSupplierList({
@@ -131,8 +137,10 @@ const getListAll = async () => {
     state: undefined,
     open: Open.open,
   });
-  total.value = data?.total || 0;
-  tableData.value = data.list;
+  if (data) {
+    total.value = data.total || 0;
+    tableData.value = data.list;
+  }
 };
 
 onMounted(async () => {
