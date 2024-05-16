@@ -1,5 +1,5 @@
 import { Md5 } from "ts-md5";
-import { SECRET } from "@/enums";
+import { SECRET } from "@/constants";
 
 export const regEmail =
   /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;

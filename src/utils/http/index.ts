@@ -3,7 +3,7 @@ import axios from "axios";
 import type { AxiosInstance, AxiosRequestConfig } from "axios";
 import type { Result, ResultData } from "./types";
 import { sortASCII, signMd5 } from "../index";
-import { SECRET } from "@/enums";
+import { SECRET } from "@/constants";
 
 const defaultConfig: AxiosRequestConfig = {
   baseURL: import.meta.env.VITE_API_URL,

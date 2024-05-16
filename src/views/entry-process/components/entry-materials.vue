@@ -336,7 +336,8 @@
 <script setup lang="ts">
 import entryUpload from "./entry-upload.vue";
 import { Md5 } from "ts-md5";
-import { SECRET, RiskType, CooperateTime, ServiceRange } from "@/enums";
+import { RiskType, CooperateTime, ServiceRange } from "@/enums";
+import { SECRET } from "@/constants";
 import type { ResultData } from "@/utils/http/types";
 import {
   type FormInstance,
@@ -680,6 +681,7 @@ const handleSubmit = async (formEl: FormInstance | undefined) => {
             await apiUpdateUser(materialsForm as User);
             if (invitationInfo.code) {
               await apiUseCode(invitationInfo.code);
+              invitationInfo.$reset();
             }
             ElMessage({
               type: "success",

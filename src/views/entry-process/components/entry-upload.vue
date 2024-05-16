@@ -31,7 +31,7 @@ import type {
   UploadProps,
   UploadInstance,
 } from "element-plus";
-import { SECRET } from "@/enums";
+import { SECRET } from "@/constants";
 
 interface EntryUploadProps {
   limit?: number;

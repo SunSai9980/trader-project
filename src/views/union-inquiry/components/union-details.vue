@@ -175,6 +175,7 @@
         <el-upload
           ref="UploadTag"
           :action="UPLOAD_URL"
+          :headers="{ sign: Md5.hashStr(SECRET), keys: JSON.stringify([]) }"
           v-model:file-list="fileList"
           class="upload-demo"
           multiple
@@ -202,7 +203,7 @@ import type {
   SupplierWebList,
   SupplierWelfareItem,
 } from "@/types/union-inquiry";
-import { UPLOAD_URL } from "@/constants";
+import { UPLOAD_URL, SECRET } from "@/constants";
 import dayjs from "dayjs";
 import type {
   FormInstance,
@@ -214,6 +215,7 @@ import type {
 import { validatorMobile, downloadFile } from "@/utils";
 import { apiSupplierCreate, apiWelfareSupplierGet } from "@/api/union-inquiry";
 import { useUserInfo } from "@/store";
+import { Md5 } from "ts-md5";
 
 const ruleFormRef = ref<FormInstance>();
 const user = useUserInfo();

@@ -23,5 +23,3 @@ export enum ServiceRange {
   aboveDistrictLevel = 1,
   belowDistrictLevel,
 }
-
-export const SECRET = "Potato";

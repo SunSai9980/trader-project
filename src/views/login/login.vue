@@ -73,8 +73,9 @@ const router = useRouter();
 const route = useRoute();
 const invitationInfo = useInvitationInfo();
 const query = route.query as unknown as InvitationInfo;
-query.recommendUser = decodeURI(window.atob(query.recommendUser));
-console.log(query);
+if (query.recommendUser) {
+  query.recommendUser = decodeURI(window.atob(query.recommendUser));
+}
 const user = useUserInfo();
 const dialogVisible = ref<boolean>(false);
 const loading = ref<boolean>(false);
@@ -111,7 +112,9 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         });
         const { data } = await apiLogin(loginForm.mobile);
         user.$state = data;
-        invitationInfo.$state = query;
+        if (query.code) {
+          invitationInfo.$state = query;
+        }
         loading.value = false;
         dialogVisible.value = false;
         router.replace("/");
