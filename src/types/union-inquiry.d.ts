@@ -1,17 +1,5 @@
 import type { InquiryStatus, Open } from "@/enums";
 
-export interface SupplierWebList {
-  annex: AnnexItem[];
-  createTime: Date;
-  deleted: boolean;
-  id: number;
-  mobile: string;
-  modifyTime: Date;
-  sunlightWelfareId: number;
-  supplierId: number;
-  supplierName: string;
-}
-
 export interface AnnexItem {
   name: string;
   url: string;
@@ -20,6 +8,9 @@ export interface AnnexItem {
 export interface FormData {
   mobile: string;
   annex: AnnexItem[];
+  orderPrice: number;
+  inspection: AnnexItem[];
+  remark: string;
 }
 
 export interface SupplierCreateParams {
@@ -27,6 +18,10 @@ export interface SupplierCreateParams {
   mobile: string;
   loginMobile: string;
   sunlightWelfareId: number;
+  orderPrice: number;
+  selected: 1 | 0;
+  inspection?: string;
+  remark?: string;
 }
 
 export interface SupplierWelfareListParams {
@@ -86,12 +81,31 @@ export interface ResponseSupplierDate {
 
 export interface SupplierListItem {
   annex: string;
-  createTime: Date;
+  createTime: string;
   deleted: boolean;
   id: number;
   mobile: string;
-  modifyTime: Date;
+  modifyTime: string;
   sunlightWelfareId: number;
   supplierId: number;
   supplierName: string;
+  orderPrice: number;
+  selected: boolean;
+  inspection: string;
+  remark: string;
+}
+export interface SupplierWebList {
+  annex: AnnexItem[];
+  createTime: string;
+  deleted: boolean;
+  id: number;
+  mobile: string;
+  modifyTime: string;
+  sunlightWelfareId: number;
+  supplierId: number;
+  supplierName: string;
+  orderPrice: number;
+  selected: boolean;
+  inspection: AnnexItem[];
+  remark: string;
 }

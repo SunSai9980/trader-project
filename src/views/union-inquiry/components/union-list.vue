@@ -1,65 +1,67 @@
 <template>
-  <div class="flex my-6">
-    <div text-center>
-      <span>状态：</span>
-      <el-select
-        v-model="state"
-        placeholder="请选择"
-        style="width: 240px"
-        :clearable="true"
-      >
-        <el-option
-          v-for="item in options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
-      </el-select>
-    </div>
-    <el-button type="primary" :icon="Search" class="ml-2" @click="getList"
-      >搜索</el-button
-    >
-    <el-button @click="getListAll">全部</el-button>
-  </div>
-  <el-table
-    :data="tableData"
-    stripe
-    style="width: 100%"
-    table-layout="auto"
-    empty-text="暂无内容"
-  >
-    <el-table-column fixed prop="orgName" label="询价工会" />
-    <el-table-column prop="welfareName" label="名称" />
-    <el-table-column prop="createTime" label="创建时间" width="180" />
-    <el-table-column label="状态" width="120">
-      <template #default="scope">
-        {{ stateTime(scope.row.askEndTime) }}
-      </template>
-    </el-table-column>
-    <el-table-column label="操作" fixed="right" width="120">
-      <template #default="scope">
-        <el-button type="primary" link @click="goDetails(scope.row)"
-          >查看详情</el-button
+  <div class="p-8 pt-0">
+    <div class="flex my-6">
+      <div text-center>
+        <span>状态：</span>
+        <el-select
+          v-model="state"
+          placeholder="请选择"
+          style="width: 240px"
+          :clearable="true"
         >
-      </template>
-    </el-table-column>
-  </el-table>
-  <el-config-provider :locale="zhCn">
-    <el-pagination
-      class="mt-5 flex justify-end"
-      v-model:current-page="currentPage"
-      v-model:page-size="pageSize"
-      :page-sizes="[10, 20, 30, 40]"
-      :small="false"
-      :disabled="false"
-      :background="true"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="total"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </div>
+      <el-button type="primary" :icon="Search" class="ml-2" @click="getList"
+        >搜索</el-button
+      >
+      <el-button @click="getListAll">全部</el-button>
+    </div>
+    <el-table
+      :data="tableData"
+      stripe
+      style="width: 100%"
+      table-layout="auto"
+      empty-text="暂无内容"
     >
-    </el-pagination>
-  </el-config-provider>
+      <el-table-column fixed prop="orgName" label="询价工会" />
+      <el-table-column prop="welfareName" label="名称" />
+      <el-table-column prop="createTime" label="创建时间" width="180" />
+      <el-table-column label="状态" width="120">
+        <template #default="scope">
+          {{ stateTime(scope.row.askEndTime) }}
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" fixed="right" width="120">
+        <template #default="scope">
+          <el-button type="primary" link @click="goDetails(scope.row)"
+            >查看详情</el-button
+          >
+        </template>
+      </el-table-column>
+    </el-table>
+    <el-config-provider :locale="zhCn">
+      <el-pagination
+        class="mt-5 flex justify-end"
+        v-model:current-page="currentPage"
+        v-model:page-size="pageSize"
+        :page-sizes="[10, 20, 30, 40]"
+        :small="false"
+        :disabled="false"
+        :background="true"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      >
+      </el-pagination>
+    </el-config-provider>
+  </div>
 </template>
 
 <script setup lang="ts">

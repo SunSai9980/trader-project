@@ -136,17 +136,25 @@ const sendCode = async () => {
   }
   if (!isSending.value) {
     isSending.value = true;
-    await apiSendCode({ phone: loginForm.mobile });
-    codeText.value = 60;
-    const intervalId = setInterval(() => {
-      if (codeText.value) {
-        (codeText.value as number) -= 1;
-      } else {
-        isSending.value = false;
-        codeText.value = "获取验证码";
-        clearInterval(intervalId);
-      }
-    }, 1000);
+    try {
+      await apiSendCode({ phone: loginForm.mobile });
+      codeText.value = 60;
+      const intervalId = setInterval(() => {
+        if (codeText.value) {
+          (codeText.value as number) -= 1;
+        } else {
+          isSending.value = false;
+          codeText.value = "获取验证码";
+          clearInterval(intervalId);
+        }
+      }, 1000);
+    } catch (e: unknown) {
+      const err = e as { data: string; message: string };
+      ElMessage({
+        message: err.data || err.message,
+        type: "error",
+      });
+    }
   } else {
   }
 };

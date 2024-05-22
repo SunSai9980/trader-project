@@ -1,14 +1,17 @@
 <template>
-  <div class="p-8 h-full">
-    <div
-      class="flex items-center justify-between px-6 py-3 bg-#fafafa border-1 rounded-lg"
-      border-color-gray
-    >
-      <span class="font-bold text-xl">工会询价</span>
-      <el-button type="primary" @click="component = UnionList"
-        >询价列表</el-button
+  <div class="h-full">
+    <div class="p-8 pb-0">
+      <div
+        class="flex items-center justify-between px-6 py-3 bg-#fafafa border-1 rounded-lg"
+        border-color-gray
       >
+        <span class="font-bold text-xl">工会询价</span>
+        <el-button type="primary" @click="component = UnionList"
+          >询价列表</el-button
+        >
+      </div>
     </div>
+
     <component
       :is="component"
       v-model:state="state"
