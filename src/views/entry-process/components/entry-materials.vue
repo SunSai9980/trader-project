@@ -232,6 +232,7 @@
         <el-form-item prop="recommendUser" label="推荐人/推荐单位">
           <el-input
             maxlength="50"
+            :disabled="recommendUserDisabled"
             v-model="materialsForm.recommendUser"
             placeholder="请输入"
           />
@@ -705,6 +706,7 @@ const handleSubmit = async (formEl: FormInstance | undefined) => {
   });
 };
 
+const recommendUserDisabled = ref(false);
 onMounted(() => {
   if (user.idCardFront) {
     fileList1.value = [
@@ -754,6 +756,9 @@ onMounted(() => {
       ];
     }
   }
+  recommendUserDisabled.value = Boolean(
+    user.recommendUser! || invitationInfo.recommendUser
+  );
   loading.value = true;
 });
 </script>
