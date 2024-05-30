@@ -15,6 +15,7 @@
     @addNum="addNum"
     @subNum="subNum"
     @updateDetailInfoState="updateDetailInfoState"
+    :isChairman="isChairman"
   />
 </template>
 
@@ -23,7 +24,14 @@ import MerchantList from "./components/merchant-list.vue";
 import MerchantDetails from "./components/merchant-details.vue";
 import { User } from "@/types";
 import { apiUserList } from "@/api/user";
-import { MaterialApplyState, State } from "@/enums";
+import { MaterialApplyState, State, CooperateType } from "@/enums";
+import { CHAIRMAN } from "@/constants";
+import { useRoute } from "vue-router";
+
+const mobile = useRoute().query.mobile as string;
+const isChairman = computed((): boolean => {
+  return mobile ? CHAIRMAN.includes(mobile) : false;
+});
 
 const components = shallowRef(MerchantList);
 const detailInfo = ref<Required<User>>();
@@ -80,9 +88,17 @@ const stateNum = async () => {
     deleted: false,
     materialApplyState: MaterialApplyState.fulfil,
     current: 1,
-    size: 100,
+    size: 150,
     descs: "modify_time",
-    states: [2, 3, 4, 5, 6],
+    states: [2, 3, 5],
+    cooperateTypes: isChairman.value
+      ? [
+          CooperateType.BirthdayBenefits,
+          CooperateType.ConsumptionAssistance,
+          CooperateType.HuishiCooperation,
+          CooperateType.SunshineBenefits,
+        ]
+      : undefined,
   });
   records.forEach((record) => {
     switch (record.state) {

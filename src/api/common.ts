@@ -23,3 +23,13 @@ export const apiUseCode = (code: string) => {
     },
   });
 };
+
+/**
+ * 发送短信
+ */
+export const apiSendMessage = (data: { mobile: string; message: string }) => {
+  return http.post({
+    url: "/merchant/user/send/message",
+    data,
+  });
+};

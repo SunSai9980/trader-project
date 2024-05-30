@@ -35,8 +35,10 @@
   >
     <el-icon size="60" color="#67C23A"><i-ep-success-filled /></el-icon>
     <div class="mt-5 text-2xl font-bold">申请完成</div>
-    <p class="mt-2 text-gray-400 text-sm">您的合作申请已完成</p>
-    <el-button type="primary" class="mt-5" @click="goLogin">前往登录</el-button>
+    <p class="mt-2 text-gray-400 text-sm">
+      您的合作申请已通过，平台将于7个工作日内联系您确认签约事宜。
+    </p>
+    <!-- <el-button type="primary" class="mt-5" @click="goLogin">前往登录</el-button> -->
   </div>
   <div v-else class="flex justify-center items-center flex-col py-20">
     <el-icon size="60" color="#F56C6C"><i-ep-circle-close-filled /></el-icon>
@@ -63,9 +65,9 @@ const handleRevisit = async () => {
   });
   emits("stepNext", State.declare, MaterialApplyState.unfinished);
 };
-const goLogin = () => {
-  window.location.href = "https://education.showyork.com/education/#/login";
-};
+// const goLogin = () => {
+//   window.location.href = "https://education.showyork.com/education/#/login";
+// };
 const handleRevisitError = async () => {
   await apiUpdateUser({
     id: user.id,

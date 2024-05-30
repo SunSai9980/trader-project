@@ -3,6 +3,7 @@ import {
   MaterialApplyState,
   RiskType,
   CooperateTime,
+  CooperateType,
   ServiceRange,
 } from "@/enums";
 import type { IBaseListParams } from "@/types";
@@ -42,7 +43,23 @@ export interface User {
   serviceRange?: ServiceRange;
   cooperateTime?: CooperateTime;
   riskType?: RiskType;
+  cooperateType?: CooperateType;
+  remark?: string;
 }
+
+type Tuple = [
+  CooperateType.BirthdayBenefits,
+  CooperateType.ConsumptionAssistance,
+  CooperateType.HuishiCooperation,
+  CooperateType.SunshineBenefits
+];
+
+// 构建所有可能的子序列
+type Subset<T extends any[]> = T extends [infer First, ...infer Rest]
+  ? [First, ...Subset<Rest>] | Subset<Rest>
+  : [];
+
+// 将 a 定义为 Tuple 的所有可能子序列的联合类型
 
 export interface IUserListData {
   deleted: boolean;
@@ -52,6 +69,7 @@ export interface IUserListData {
   states: State[];
   materialApplyState?: MaterialApplyState.fulfil;
   descs: string;
+  cooperateTypes?: Subset<Tuple>;
 }
 
 export interface IUserListParma {

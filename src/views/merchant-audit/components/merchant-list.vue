@@ -52,8 +52,6 @@
         empty-text="暂无内容"
       >
         <el-table-column fixed prop="enterpriseName" label="企业名称" />
-        <el-table-column prop="name" label="负责人" width="120" />
-        <el-table-column prop="loginMobile" label="负责人手机号" width="120" />
         <el-table-column label="推荐人" prop="recommendUser">
           <template #default="scope">{{
             scope.row.recommendUser || "-"
@@ -75,6 +73,44 @@
               ? "低风险"
               : "-"
           }}</template>
+        </el-table-column>
+        <el-table-column label="合作类型" prop="cooperateType" width="180">
+          <template #default="scope">
+            <div v-if="isChairman || scope.row.cooperateType">
+              {{ cooperateLabel(scope.row.cooperateType) }}
+            </div>
+            <div v-else>
+              <el-select
+                v-model="scope.row.cooperateType"
+                placeholder="请选择合作类型"
+                :clearable="true"
+                @change="handleCooperateType(scope.row)"
+              >
+                <el-option
+                  v-for="item in cooperateOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="备注" prop="remark" width="200">
+          <template #default="scope">
+            <div v-if="isChairman">{{ scope.row.remark || "-" }}</div>
+            <el-input
+              v-else
+              v-model="scope.row.remark"
+              autosize
+              type="textarea"
+              maxlength="200"
+              show-word-limit
+              placeholder=""
+              @change="handleRemark(scope.row)"
+              @focus="handleFocus(scope.row.remark)"
+            />
+          </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="120">
           <template #default="scope">
@@ -115,17 +151,19 @@
 <script setup lang="ts">
 import zhCn from "element-plus/es/locale/lang/zh-cn";
 import { Search } from "@element-plus/icons-vue";
-import { RiskType, State } from "@/enums";
 import type { User } from "@/types";
-import { apiDelUser, apiUserList } from "@/api/user";
-import { MaterialApplyState } from "@/enums";
+import { apiDelUser, apiUserList, apiUpdateUser } from "@/api/user";
+import { MaterialApplyState, CooperateType, RiskType, State } from "@/enums";
 import dayjs from "dayjs";
+// import { CHAIRMAN } from "@/constants";
+// import { useRoute } from "vue-router";
 
-defineProps<{
+const props = defineProps<{
   detailInfo?: Required<User>;
   successesNum: number;
   passNum: number;
   pendingNum: number;
+  isChairman: boolean;
 }>();
 const emits = defineEmits([
   "goList",
@@ -134,6 +172,12 @@ const emits = defineEmits([
   "subNum",
   "updateDetailInfoState",
 ]);
+
+// const mobile = useRoute().query.mobile as string;
+// const isChairman = computed(() => {
+//   return mobile && CHAIRMAN.includes(mobile);
+// });
+
 const spacer = h(ElDivider, { direction: "vertical" });
 const enterpriseName = defineModel<string>("enterpriseName");
 const state = defineModel<State | undefined>("state");
@@ -163,6 +207,39 @@ const options = reactive([
     label: "已合作",
   },
 ]);
+const cooperateOptions = [
+  {
+    label: "阳光福利",
+    value: CooperateType.SunshineBenefits,
+  },
+  {
+    label: "消费帮扶",
+    value: CooperateType.ConsumptionAssistance,
+  },
+  {
+    label: "生日福利",
+    value: CooperateType.BirthdayBenefits,
+  },
+  {
+    label: "惠师合作",
+    value: CooperateType.HuishiCooperation,
+  },
+];
+const cooperateLabel = (type: CooperateType) => {
+  switch (type) {
+    case CooperateType.SunshineBenefits:
+      return "阳光福利";
+    case CooperateType.ConsumptionAssistance:
+      return "消费帮扶";
+    case CooperateType.BirthdayBenefits:
+      return "生日福利";
+    case CooperateType.HuishiCooperation:
+      return "惠师合作";
+    default:
+      return "-";
+  }
+};
+
 const stateMsg = (state: State) => {
   switch (state) {
     case State.declare:
@@ -221,9 +298,81 @@ const getList = async (all: boolean = false) => {
     descs: "modify_time",
     enterpriseName: enterpriseName.value,
     states: state.value ? [state.value] : [2, 3, 4, 5, 6],
+    cooperateTypes: props.isChairman
+      ? [
+          CooperateType.BirthdayBenefits,
+          CooperateType.ConsumptionAssistance,
+          CooperateType.HuishiCooperation,
+          CooperateType.SunshineBenefits,
+        ]
+      : undefined,
   });
   total.value = allNum;
   tableData.value = records;
+};
+
+const handleCooperateType = (item: User) => {
+  ElMessageBox.confirm("是否确认该合作类型？选择后无法修改", "", {
+    confirmButtonText: "确认",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      apiUpdateUser({
+        id: item.id,
+        cooperateType: item.cooperateType,
+      })
+        .then(() => {
+          ElMessage({
+            type: "success",
+            message: "设置成功",
+          });
+        })
+        .catch((error) => {
+          ElMessage.error(error.data || error.message);
+        });
+    })
+    .catch(() => {
+      ElMessage({
+        type: "info",
+        message: "已取消",
+      });
+      item.cooperateType = undefined;
+    });
+};
+
+let currentRemark: string | undefined;
+const handleRemark = (item: User) => {
+  ElMessageBox.confirm("是否确认更改备注？", "", {
+    confirmButtonText: "确认",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      apiUpdateUser({
+        id: item.id,
+        remark: item.remark,
+      })
+        .then(() => {
+          ElMessage({
+            type: "success",
+            message: "更改成功",
+          });
+        })
+        .catch((error) => {
+          ElMessage.error(error.data || error.message);
+        });
+    })
+    .catch(() => {
+      ElMessage({
+        type: "info",
+        message: "已取消",
+      });
+      item.remark = currentRemark;
+    });
+};
+const handleFocus = (str: string) => {
+  currentRemark = str;
 };
 
 onMounted(async () => {

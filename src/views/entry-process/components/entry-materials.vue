@@ -263,10 +263,10 @@
               @click="
                 downloadFile(
                   'https://ddup-education.oss-cn-beijing.aliyuncs.com/file/%E9%98%BF%E6%8B%89%E6%95%99%E5%B8%88%E7%A0%81%E5%B9%B3%E5%8F%B0%E6%83%A0%E5%B8%88%E5%90%88%E4%BD%9C%E6%9C%8D%E5%8A%A1%E6%89%BF%E8%AF%BA%E7%99%BB%E8%AE%B0%E8%A1%A8%EF%BC%88%E5%A1%AB%E5%86%99%E8%8C%83%E4%BE%8B%EF%BC%89.xlsx',
-                  '模板承诺书.xlsx'
+                  '商户合作风险承诺表.xlsx'
                 )
               "
-              >《模板承诺书》</span
+              >《商户合作风险承诺表》</span
             >填写并盖章后扫描对应文件上传，要求公章完整清晰
           </div>
           <div class="text-xs leading-7">
@@ -385,12 +385,16 @@ interface Materials {
 
 const serviceRangeOptions = [
   {
-    label: "区级及以上",
-    value: ServiceRange.aboveDistrictLevel,
+    label: "大市范围",
+    value: ServiceRange.LargeCityArea,
   },
   {
-    label: "区级以下基层工会",
-    value: ServiceRange.belowDistrictLevel,
+    label: "区（县、市）范围",
+    value: ServiceRange.CountyScope,
+  },
+  {
+    label: "基层范围",
+    value: ServiceRange.GrassrootsScope,
   },
 ];
 
@@ -665,9 +669,9 @@ const handleSubmit = async (formEl: FormInstance | undefined) => {
         .then(async () => {
           try {
             if (
-              materialsForm.servicePrice >= 5000 ||
+              materialsForm.serviceRange !== ServiceRange.GrassrootsScope ||
+              materialsForm.servicePrice >= 50000 ||
               materialsForm.serviceJoinUserNum >= 1000 ||
-              materialsForm.serviceRange === ServiceRange.aboveDistrictLevel ||
               materialsForm.cooperateTime === CooperateTime.moreThanThreeMonths
             ) {
               materialsForm.riskType = RiskType.highRisk;

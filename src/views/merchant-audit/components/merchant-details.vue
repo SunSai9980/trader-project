@@ -51,31 +51,108 @@
         </div>
       </div>
       <el-divider class="!mt-0" />
-      <div class="px-5">
-        <div class="font-semibold text-xs">负责人信息</div>
-        <el-row class="mt-5" :gutter="10">
-          <el-col :span="8">
-            <div class="flex text-sm">
-              <div>姓名：</div>
-              <div class="text-#5a5a5a">{{ detailInfo!.name }}</div>
-            </div>
-          </el-col>
-          <el-col :span="8">
-            <div class="flex text-sm">
-              <div>手机号：</div>
-              <div class="text-#5a5a5a">{{ detailInfo!.mobile }}</div>
-            </div>
-          </el-col>
-          <el-col :span="8">
-            <div class="flex text-sm">
-              <div>邮箱：</div>
-              <div class="text-#5a5a5a">{{ detailInfo!.email }}</div>
-            </div>
-          </el-col>
-        </el-row>
-        <div class="flex text-sm mt-8">
-          <div>身份证：</div>
-          <div class="mr-10">
+      <div class="px-5 pb-5">
+        <el-descriptions
+          title="企业信息"
+          direction="vertical"
+          :column="9"
+          size="default"
+          border
+        >
+          <el-descriptions-item label="企业名称">{{
+            detailInfo!.enterpriseName
+          }}</el-descriptions-item>
+          <el-descriptions-item label="合作类型">{{
+            cooperateLabel
+          }}</el-descriptions-item>
+          <el-descriptions-item label="商户合作风险承诺表">
+            <el-tooltip
+              class="box-item"
+              effect="dark"
+              :content="item.name"
+              placement="top-start"
+              v-for="(item, index) in commitment"
+              :key="index"
+            >
+              <div
+                class="text-[#409EFF] text-xs cursor-pointer inline-block item w-[150px] text-ellipsis-2"
+                @click="downloadFile(item.url, item.name)"
+              >
+                {{ item.name }}
+              </div>
+            </el-tooltip>
+          </el-descriptions-item>
+          <el-descriptions-item label="风险类型" min-width="80">
+            {{ riskType }}
+          </el-descriptions-item>
+          <el-descriptions-item label="推荐人/推荐单位">
+            {{ detailInfo!.recommendUser || "-" }}
+          </el-descriptions-item>
+          <el-descriptions-item label="服务金额（元）">
+            {{ detailInfo!.servicePrice || "-" }}
+          </el-descriptions-item>
+          <el-descriptions-item label="服务参与人数（人）">
+            {{ detailInfo!.serviceJoinUserNum || "-" }}
+          </el-descriptions-item>
+          <el-descriptions-item label="服务范围">
+            {{ serviceRange }}
+          </el-descriptions-item>
+          <el-descriptions-item label="合作时间">
+            {{ cooperateTime }}
+          </el-descriptions-item>
+          <el-descriptions-item label="社会统一信用代码">
+            {{ detailInfo!.creditCode }}
+          </el-descriptions-item>
+          <el-descriptions-item label="企业营业执照">
+            <el-image
+              style="width: 150px; height: 150px"
+              :src="srcList[2]"
+              :zoom-rate="1.2"
+              :max-scale="7"
+              :min-scale="0.2"
+              :preview-src-list="srcList"
+              :initial-index="2"
+              fit="cover"
+            />
+          </el-descriptions-item>
+          <el-descriptions-item label="食品经营许可证">
+            <el-image
+              class="mr-3"
+              v-for="(_item, idex) in operatePermit"
+              :key="idex"
+              style="width: 150px; height: 150px"
+              :src="srcList[3 + idex]"
+              :zoom-rate="1.2"
+              :max-scale="7"
+              :min-scale="0.2"
+              :preview-src-list="srcList"
+              :initial-index="3 + idex"
+              fit="cover"
+            />
+          </el-descriptions-item>
+          <el-descriptions-item label="备注">
+            {{ detailInfo!.remark || "-" }}
+          </el-descriptions-item>
+        </el-descriptions>
+
+        <el-descriptions
+          class="mt-10"
+          title="负责人信息"
+          direction="vertical"
+          :column="5"
+          size="default"
+          border
+        >
+          <el-descriptions-item label="姓名">{{
+            detailInfo!.name
+          }}</el-descriptions-item>
+          <el-descriptions-item label="手机号">{{
+            detailInfo!.mobile
+          }}</el-descriptions-item>
+          <el-descriptions-item label="邮箱">{{
+            detailInfo!.email
+          }}</el-descriptions-item>
+          <el-descriptions-item label="身份证（人像面）">
             <el-image
               style="width: 150px; height: 150px"
               :src="srcList[0]"
@@ -86,9 +163,8 @@
               :initial-index="0"
               fit="cover"
             />
-            <div class="text-#5a5a5a text-center">人像面</div>
-          </div>
-          <div>
+          </el-descriptions-item>
+          <el-descriptions-item label="身份证（国徽面）">
             <el-image
               style="width: 150px; height: 150px"
               :src="srcList[1]"
@@ -99,123 +175,12 @@
               :initial-index="1"
               fit="cover"
             />
-            <div class="text-#5a5a5a text-center">国徽面</div>
-          </div>
-        </div>
-
-        <div class="font-semibold text-xs mt-10">企业信息</div>
-        <el-row class="mt-5" :gutter="10">
-          <el-col :span="8">
-            <div class="flex text-sm">
-              <div>企业名称：</div>
-              <div class="text-#5a5a5a">{{ detailInfo!.enterpriseName }}</div>
-            </div>
-          </el-col>
-          <el-col :span="8">
-            <div class="flex text-sm">
-              <div>社会统一信用代码：</div>
-              <div class="text-#5a5a5a">{{ detailInfo!.creditCode }}</div>
-            </div>
-          </el-col>
-          <el-col :span="8">
-            <div class="flex text-sm">
-              <div>推荐人/推荐单位：</div>
-              <div class="text-#5a5a5a">
-                {{ detailInfo!.recommendUser || "-" }}
-              </div>
-            </div>
-          </el-col>
-        </el-row>
-        <el-row class="mt-5" :gutter="10">
-          <el-col :span="8">
-            <div class="flex text-sm">
-              <div>服务金额：</div>
-              <div class="text-#5a5a5a">
-                {{ detailInfo!.servicePrice || "-" }}
-              </div>
-            </div>
-          </el-col>
-          <el-col :span="8">
-            <div class="flex text-sm">
-              <div>服务参与人数：</div>
-              <div class="text-#5a5a5a">
-                {{ detailInfo!.serviceJoinUserNum || "-" }}
-              </div>
-            </div>
-          </el-col>
-          <el-col :span="8">
-            <div class="flex text-sm">
-              <div>服务范围：</div>
-              <div class="text-#5a5a5a">
-                {{ serviceRange }}
-              </div>
-            </div>
-          </el-col>
-        </el-row>
-        <el-row class="mt-5" :gutter="10">
-          <el-col :span="8">
-            <div class="flex text-sm">
-              <div>合作时间：</div>
-              <div class="text-#5a5a5a">{{ cooperateTime }}</div>
-            </div>
-          </el-col>
-          <el-col :span="8">
-            <div class="flex text-sm">
-              <div>风险类型：</div>
-              <div class="text-#5a5a5a">{{ riskType }}</div>
-            </div>
-          </el-col>
-          <el-col :span="8">
-            <div class="flex text-sm">
-              <div class="w-[140px]">合作服务承诺登记书：</div>
-              <span
-                class="text-[#409EFF] cursor-pointer"
-                v-for="(item, index) in commitment"
-                :key="index"
-                @click="downloadFile(item.url, item.name)"
-                >{{ item.name }}</span
-              >
-            </div>
-          </el-col>
-        </el-row>
-        <el-row class="mt-8 pb-20">
-          <el-col :span="8">
-            <div class="flex text-sm">
-              <div>企业营业执照：</div>
-              <el-image
-                style="width: 150px; height: 150px"
-                :src="srcList[2]"
-                :zoom-rate="1.2"
-                :max-scale="7"
-                :min-scale="0.2"
-                :preview-src-list="srcList"
-                :initial-index="2"
-                fit="cover"
-              />
-            </div>
-          </el-col>
-          <el-col :span="16">
-            <div class="flex text-sm">
-              <div>食品经营许可证或其他特许经营许可证书（需加盖公章）：</div>
-              <el-image
-                class="mr-3"
-                v-for="(_item, idex) in operatePermit"
-                :key="idex"
-                style="width: 150px; height: 150px"
-                :src="srcList[3 + idex]"
-                :zoom-rate="1.2"
-                :max-scale="7"
-                :min-scale="0.2"
-                :preview-src-list="srcList"
-                :initial-index="3 + idex"
-                fit="cover"
-              />
-            </div>
-          </el-col>
-        </el-row>
+          </el-descriptions-item>
+        </el-descriptions>
       </div>
     </div>
   </div>
+
   <el-dialog v-model="dialogVisible" title="核验资料" width="500">
     <el-divider class="!mt-0" />
     <el-form ref="formTag" :model="formData" :rules="formRules">
@@ -234,7 +199,10 @@
       <el-form-item class="!mb-0">
         <div class="flex justify-end w-full">
           <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="handleReject(formTag)"
+          <el-button
+            type="primary"
+            :loading="rejectLoading"
+            @click="handleReject(formTag)"
             >确 定</el-button
           >
         </div>
@@ -262,6 +230,7 @@
           <el-button @click="dialogVisibleEntryAudit = false">取 消</el-button>
           <el-button
             type="primary"
+            :loading="entryAuditLoading"
             @click="handleEntryAudit(formDataEntryAuditTag)"
             >确 定</el-button
           >
@@ -287,7 +256,9 @@
       <el-form-item class="!mb-0">
         <div class="flex justify-end w-full">
           <el-button @click="dialogVisibleExamine = false">取 消</el-button>
-          <el-button type="primary" @click="handlePass">确 定</el-button>
+          <el-button type="primary" :loading="passLoading" @click="handlePass"
+            >确 定</el-button
+          >
         </div>
       </el-form-item>
     </el-form>
@@ -298,11 +269,19 @@
 import EntryAgreement from "../../entry-process/components/entry-agreement.vue";
 import { WarningFilled } from "@element-plus/icons-vue";
 import type { User } from "@/types";
-import { State, RiskType, CooperateTime, ServiceRange } from "@/enums";
+import {
+  State,
+  RiskType,
+  CooperateTime,
+  ServiceRange,
+  CooperateType,
+} from "@/enums";
 import { downloadFile } from "@/utils";
 import { apiUpdateUser } from "@/api/user";
 import type { FormInstance, FormRules } from "element-plus";
 import { computed } from "vue";
+import { OPERATIONMOBILE } from "@/constants";
+import { apiSendMessage } from "@/api/common";
 
 const emits = defineEmits([
   "goList",
@@ -316,11 +295,35 @@ const props = defineProps<{
   successesNum: number;
   passNum: number;
   pendingNum: number;
+  isChairman: boolean;
 }>();
 
+// const mobile = useRoute().query.mobile as string;
+// const isChairman = computed(() => {
+//   return mobile && CHAIRMAN.includes(mobile);
+// });
+
+const cooperateLabel = computed(() => {
+  if (props.detailInfo && props.detailInfo.cooperateType) {
+    switch (props.detailInfo.cooperateType) {
+      case CooperateType.SunshineBenefits:
+        return "阳光福利";
+      case CooperateType.ConsumptionAssistance:
+        return "消费帮扶";
+      case CooperateType.BirthdayBenefits:
+        return "生日福利";
+      case CooperateType.HuishiCooperation:
+        return "惠师合作";
+      default:
+        return "-" as never;
+    }
+  } else {
+    return "-";
+  }
+});
 const riskType = computed(() => {
-  if (props.detailInfo!.riskType) {
-    switch (props.detailInfo!.riskType) {
+  if (props.detailInfo && props.detailInfo.riskType) {
+    switch (props.detailInfo.riskType) {
       case RiskType.highRisk:
         return "高风险";
       case RiskType.loweRisk:
@@ -345,10 +348,12 @@ const cooperateTime = computed(() => {
 const serviceRange = computed(() => {
   if (props.detailInfo!.serviceRange) {
     switch (props.detailInfo!.serviceRange) {
-      case ServiceRange.aboveDistrictLevel:
-        return "区级及以上";
-      case ServiceRange.belowDistrictLevel:
-        return "区级以下基层工会";
+      case ServiceRange.LargeCityArea:
+        return "大市范围";
+      case ServiceRange.CountyScope:
+        return "区（县、市）范围";
+      case ServiceRange.GrassrootsScope:
+        return "基层范围";
     }
   } else {
     return "-";
@@ -405,11 +410,15 @@ const dialogVisibleExamine = ref(false);
 const formDataPass = reactive<{ riskType: RiskType }>({
   riskType: props.detailInfo!.riskType || RiskType.highRisk,
 });
+const passLoading = ref(false);
 const handlePass = async () => {
-  // ElMessageBox.confirm("是否确认该企业的资料核验通过？", {
-  //   type: "warning",
-  //   icon: markRaw(WarningFilled),
-  // }).then(() => {
+  if (props.detailInfo && !props.detailInfo.cooperateType) {
+    return ElMessage({
+      message: "未选择合作类型无法审核",
+      type: "warning",
+    });
+  }
+  passLoading.value = true;
   const state =
     formDataPass.riskType === RiskType.loweRisk
       ? State.ShortlistingSuccess
@@ -418,17 +427,21 @@ const handlePass = async () => {
     id: props.detailInfo?.id!,
     state,
     riskType: formDataPass.riskType,
-  }).then(() => {
-    emits("subNum", props.detailInfo?.state);
-    emits("addNum", state);
-    emits("updateDetailInfoState", state);
-    ElMessage({
-      type: "success",
-      message: "核验通过成功",
+  })
+    .then(() => {
+      emits("subNum", props.detailInfo?.state);
+      emits("addNum", state);
+      emits("updateDetailInfoState", state);
+      ElMessage({
+        type: "success",
+        message: "核验通过成功",
+      });
+      sendMessage(`${props.detailInfo?.enterpriseName}的合作申请已被审批`);
+    })
+    .finally(() => {
+      dialogVisibleExamine.value = false;
+      passLoading.value = false;
     });
-    dialogVisibleExamine.value = false;
-  });
-  // });
 };
 
 const dialogVisible = ref(false);
@@ -439,24 +452,37 @@ const formData = reactive<{ reason: string }>({
 const formRules = reactive<FormRules<{ reason: string }>>({
   reason: [{ required: true, message: "请输入拒绝理由", trigger: "blur" }],
 });
+const rejectLoading = ref(false);
 const handleReject = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
+  if (props.detailInfo && !props.detailInfo.cooperateType) {
+    return ElMessage({
+      message: "未选择合作类型无法审核",
+      type: "warning",
+    });
+  }
   await formEl.validate(async (valid, fields) => {
     if (valid) {
-      dialogVisible.value = false;
+      rejectLoading.value = true;
       apiUpdateUser({
         id: props.detailInfo?.id!,
         state: State.error,
         reason: formData.reason,
-      }).then((_res) => {
-        emits("subNum", props.detailInfo?.state);
-        emits("addNum", State.error);
-        emits("updateDetailInfoState", State.error);
-        ElMessage({
-          type: "success",
-          message: "核验拒绝成功",
+      })
+        .then((_res) => {
+          emits("subNum", props.detailInfo?.state);
+          emits("addNum", State.error);
+          emits("updateDetailInfoState", State.error);
+          ElMessage({
+            type: "success",
+            message: "核验拒绝成功",
+          });
+          sendMessage(`${props.detailInfo?.enterpriseName}的合作申请已被审批`);
+        })
+        .finally(() => {
+          dialogVisible.value = false;
+          rejectLoading.value = false;
         });
-      });
     } else {
       console.log("error submit!", fields);
     }
@@ -471,27 +497,53 @@ const formDataEntryAudit = reactive<{ state?: State }>({
 const formDataEntryAuditRules = reactive<FormRules<{ state: State }>>({
   state: [{ required: true, message: "请选择", trigger: "blur" }],
 });
+const entryAuditLoading = ref(false);
 const handleEntryAudit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
+  if (props.detailInfo && !props.detailInfo.cooperateType) {
+    return ElMessage({
+      message: "未选择合作类型无法审核",
+      type: "warning",
+    });
+  }
+  entryAuditLoading.value = true;
   await formEl.validate(async (valid, fields) => {
     if (valid) {
-      dialogVisibleEntryAudit.value = false;
       apiUpdateUser({
         id: props.detailInfo?.id!,
         state: formDataEntryAudit.state,
-      }).then((_res) => {
-        emits("subNum", props.detailInfo?.state);
-        emits("addNum", formDataEntryAudit.state);
-        emits("updateDetailInfoState", formDataEntryAudit.state);
-        ElMessage({
-          type: "success",
-          message: "处理成功",
+      })
+        .then((_res) => {
+          emits("subNum", props.detailInfo?.state);
+          emits("addNum", formDataEntryAudit.state);
+          emits("updateDetailInfoState", formDataEntryAudit.state);
+          ElMessage({
+            type: "success",
+            message: "处理成功",
+          });
+          sendMessage(`${props.detailInfo?.enterpriseName}的合作申请已被审批`);
+        })
+        .finally(() => {
+          dialogVisibleEntryAudit.value = false;
+          entryAuditLoading.value = false;
         });
-      });
     } else {
       console.log("error submit!", fields);
     }
   });
+};
+
+let isSend = true;
+const sendMessage = (message: string) => {
+  if (props.isChairman && isSend) {
+    isSend = false;
+    apiSendMessage({
+      mobile: OPERATIONMOBILE,
+      message,
+    }).finally(() => {
+      isSend = true;
+    });
+  }
 };
 </script>
 

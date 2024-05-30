@@ -158,7 +158,7 @@
             controls-position="right"
           />
         </el-form-item>
-        <el-form-item label="膨胀率" prop="expansionRate" label-width="80">
+        <el-form-item label="膨胀率（%）" prop="expansionRate" label-width="80">
           <el-input-number
             disabled
             v-model="expansionRate"
@@ -195,6 +195,21 @@
           <el-button type="primary">上传</el-button>
         </el-upload>
       </el-form-item>
+      <el-form-item label="快递范围" prop="deliveryArea">
+        <el-select
+          v-model="detailsForm.deliveryArea"
+          placeholder="请选择快递范围"
+          size="large"
+          style="width: 240px"
+        >
+          <el-option
+            v-for="item in courierRange"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="备注" prop="remark">
         <el-input
           v-model="detailsForm.remark"
@@ -230,6 +245,11 @@
       </el-table-column>
       <el-table-column label="状态">
         <template #default>回应</template>
+      </el-table-column>
+      <el-table-column label="快递范围" prop="deliveryArea">
+        <template #default="scope">
+          {{ courierLabel(scope.row.deliveryArea) }}
+        </template>
       </el-table-column>
       <el-table-column prop="annex" label="报价表" width="180">
         <template #default="scope">
@@ -308,6 +328,7 @@ import { apiSupplierCreate, apiWelfareSupplierGet } from "@/api/union-inquiry";
 import { useUserInfo } from "@/store";
 import { Md5 } from "ts-md5";
 import Big from "big.js";
+import { CourierRange } from "@/enums";
 
 const ruleFormRef = ref<FormInstance>();
 const user = useUserInfo();
@@ -324,6 +345,7 @@ const detailsForm = reactive<FormData>({
   orderPrice: 0,
   inspection: [],
   remark: "",
+  deliveryArea: undefined,
 });
 const expansionRate = computed(() => {
   if (
@@ -333,15 +355,18 @@ const expansionRate = computed(() => {
   ) {
     const price = new Big(detailsForm.orderPrice);
     const unitPrice = new Big(props.detailInfo.unitPrice);
-    return parseFloat(price.div(unitPrice).toFixed(4));
+    return price.div(unitPrice).round(2).times(100);
   }
   return 0;
 });
 const getExpansionRate = (data: SupplierListItem) => {
   if (props.detailInfo && props.detailInfo.unitPrice && data.orderPrice) {
-    return new Big(data.orderPrice)
-      .div(new Big(props.detailInfo.unitPrice))
-      .toFixed(4);
+    return (
+      new Big(data.orderPrice)
+        .div(new Big(props.detailInfo.unitPrice))
+        .round(2)
+        .times(100) + "%"
+    );
   }
   return 0;
 };
@@ -357,6 +382,29 @@ const validatorAnnex = (rule: any, value: any, callback: any) => {
     callback();
   } else {
     callback(new Error(rule.message));
+  }
+};
+const courierRange: { label: string; value: CourierRange }[] = [
+  { label: "宁波大市内包邮", value: CourierRange.NBFreeShipping },
+  { label: "浙江省内包邮", value: CourierRange.ZJFreeShipping },
+  { label: "江浙沪包邮", value: CourierRange.JZHFreeShipping },
+  { label: "全国包邮", value: CourierRange.FreeShipping },
+  { label: "统一配送到校", value: CourierRange.DeliveryToSchool },
+];
+const courierLabel = (type: CourierRange) => {
+  switch (type) {
+    case CourierRange.NBFreeShipping:
+      return "宁波大市内包邮";
+    case CourierRange.ZJFreeShipping:
+      return "浙江省内包邮";
+    case CourierRange.JZHFreeShipping:
+      return "江浙沪包邮";
+    case CourierRange.FreeShipping:
+      return "全国包邮";
+    case CourierRange.DeliveryToSchool:
+      return "统一配送到校";
+    default:
+      return "-";
   }
 };
 const rules = reactive<FormRules<FormData>>({
@@ -382,6 +430,13 @@ const rules = reactive<FormRules<FormData>>({
       trigger: "blur",
     },
   ],
+  deliveryArea: [
+    {
+      required: true,
+      message: "请选择快递范围",
+      trigger: "blur",
+    },
+  ],
 });
 let pol = true;
 const handleConfirm = async (formEl: FormInstance | undefined) => {
@@ -389,11 +444,15 @@ const handleConfirm = async (formEl: FormInstance | undefined) => {
   await formEl.validate(async (valid, fields) => {
     if (valid) {
       if (pol) {
-        ElMessageBox.confirm("请认真核对内容，是否确认提交？", "", {
-          confirmButtonText: "确 认",
-          cancelButtonText: "取 消",
-          type: "warning",
-        })
+        ElMessageBox.confirm(
+          "询价应答内容一经提交不可修改，是否确定提交？",
+          "",
+          {
+            confirmButtonText: "确 认",
+            cancelButtonText: "取 消",
+            type: "warning",
+          }
+        )
           .then(async () => {
             try {
               pol = false;
@@ -408,6 +467,7 @@ const handleConfirm = async (formEl: FormInstance | undefined) => {
                 remark: detailsForm.remark,
                 loginMobile: user.loginMobile!,
                 sunlightWelfareId: props.detailInfo?.id!,
+                deliveryArea: detailsForm.deliveryArea!,
               });
               ElMessage.success("提交成功");
               setTimeout(() => {

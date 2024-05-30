@@ -20,6 +20,22 @@ export enum CooperateTime {
   lessThanThreeMonths,
 }
 export enum ServiceRange {
-  aboveDistrictLevel = 1,
-  belowDistrictLevel,
+  LargeCityArea = 1,
+  CountyScope,
+  GrassrootsScope,
+}
+
+export enum CourierRange {
+  NBFreeShipping = 1,
+  ZJFreeShipping,
+  JZHFreeShipping,
+  FreeShipping,
+  DeliveryToSchool,
+}
+
+export enum CooperateType {
+  SunshineBenefits = 1,
+  ConsumptionAssistance,
+  BirthdayBenefits,
+  HuishiCooperation,
 }

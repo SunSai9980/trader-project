@@ -11,6 +11,7 @@ export interface FormData {
   orderPrice: number;
   inspection: AnnexItem[];
   remark: string;
+  deliveryArea: number | undefined;
 }
 
 export interface SupplierCreateParams {
@@ -22,6 +23,7 @@ export interface SupplierCreateParams {
   selected: 1 | 0;
   inspection?: string;
   remark?: string;
+  deliveryArea: number;
 }
 
 export interface SupplierWelfareListParams {
@@ -93,6 +95,7 @@ export interface SupplierListItem {
   selected: boolean;
   inspection: string;
   remark: string;
+  courierRange: number;
 }
 export interface SupplierWebList {
   annex: AnnexItem[];
@@ -108,4 +111,5 @@ export interface SupplierWebList {
   selected: boolean;
   inspection: AnnexItem[];
   remark: string;
+  courierRange: number;
 }
