@@ -355,7 +355,7 @@ const expansionRate = computed(() => {
   ) {
     const price = new Big(detailsForm.orderPrice);
     const unitPrice = new Big(props.detailInfo.unitPrice);
-    return price.div(unitPrice).round(2).times(100);
+    return parseFloat(price.div(unitPrice).round(2).times(100) + "");
   }
   return 0;
 });
