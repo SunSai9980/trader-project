@@ -27,7 +27,11 @@ const statusComponent = computed(() => {
       component = EntryInformed;
       break;
     case State.declare:
-      component = EntryMaterials;
+      if (user.cooperateType) {
+        component = EntryResult;
+      } else {
+        component = EntryMaterials;
+      }
       break;
     case State.successes:
     case State.error:
@@ -48,13 +52,16 @@ const initActive = () => {
     case State.know:
       return 0;
     case State.declare:
+      if (user.cooperateType) {
+        return 3;
+      }
       return user.materialApplyState!;
     case State.successes:
     case State.error:
-      return 3;
+      return 4;
     case State.ShortlistingError:
     case State.ShortlistingSuccess:
-      return 4;
+      return 5;
     default:
       return 0;
   }

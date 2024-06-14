@@ -317,6 +317,18 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item
+          prop="companyProfile"
+          label="企业简介(介绍业务情况、成立时间、办公地点等)"
+        >
+          <el-input
+            v-model="materialsForm.companyProfile"
+            maxlength="500"
+            :autosize="{ minRows: 4 }"
+            type="textarea"
+            placeholder="请填写公司简介"
+          />
+        </el-form-item>
       </el-form>
       <div
         class="mt-6 py-3 px-10 shadow flex items-center fixed bottom-0 right-[20px] left-[220px] bg-#fff"
@@ -337,7 +349,7 @@
 <script setup lang="ts">
 import entryUpload from "./entry-upload.vue";
 import { Md5 } from "ts-md5";
-import { RiskType, CooperateTime, ServiceRange } from "@/enums";
+import { RiskType, CooperateTime, ServiceRange, CooperateType } from "@/enums";
 import { SECRET } from "@/constants";
 import type { ResultData } from "@/utils/http/types";
 import {
@@ -381,6 +393,8 @@ interface Materials {
   serviceRange: ServiceRange;
   cooperateTime: CooperateTime;
   riskType?: RiskType;
+  companyProfile: string;
+  cooperateType?: CooperateType;
 }
 
 const serviceRangeOptions = [
@@ -457,6 +471,8 @@ const materialsForm = reactive<Materials>({
   serviceJoinUserNum: user.serviceJoinUserNum!,
   serviceRange: user.serviceRange!,
   cooperateTime: user.cooperateTime!,
+  companyProfile: user.companyProfile || "",
+  cooperateType: undefined,
 });
 
 const materialsRules = reactive<FormRules<Materials>>({
@@ -548,6 +564,13 @@ const materialsRules = reactive<FormRules<Materials>>({
     {
       required: true,
       message: "请上传承诺书",
+      trigger: "blur",
+    },
+  ],
+  companyProfile: [
+    {
+      required: true,
+      message: "请填写公司简介",
       trigger: "blur",
     },
   ],

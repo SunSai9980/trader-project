@@ -17,7 +17,13 @@
         <div>{{ dayjs(user.createTime).format("YYYY-MM-DD HH:mm") }}</div>
       </template> -->
     </el-step>
-    <el-step title="核验资料">
+    <el-step title="平台核验材料">
+      <!-- <template #description>
+        <div>{{ user.loginMobile }}</div>
+        <div>{{ dayjs(user.createTime).format("YYYY-MM-DD HH:mm") }}</div>
+      </template> -->
+    </el-step>
+    <el-step title="市教育工会审批">
       <!-- <template #description>
         <div>管理员</div>
         <div>{{ dayjs(user.createTime).format("YYYY-MM-DD HH:mm") }}</div>

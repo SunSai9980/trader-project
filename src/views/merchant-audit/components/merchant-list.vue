@@ -278,10 +278,28 @@ const handleCurrentChange = async (val: number) => {
   });
 };
 const handleRemove = async (data: Required<User>) => {
-  await apiDelUser(data.id);
-  emits("subNum", data.state);
-  ElMessage.success("删除成功");
-  getList();
+  ElMessageBox.confirm("是否确认删除该申报记录？", "", {
+    confirmButtonText: "确 认",
+    cancelButtonText: "取 消",
+    type: "warning",
+  })
+    .then(() => {
+      apiDelUser(data.id)
+        .then(() => {
+          emits("subNum", data.state);
+          ElMessage.success("删除成功");
+          getList();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    })
+    .catch(() => {
+      ElMessage({
+        type: "info",
+        message: "已取消",
+      });
+    });
 };
 const getList = async (all: boolean = false) => {
   if (all) {

@@ -45,7 +45,6 @@ class Http {
     // 添加所有实例都有的响应拦截器
     this.instance.interceptors.response.use(
       (response) => {
-        ``;
         return response;
       },
       (error) => {

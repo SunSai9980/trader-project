@@ -72,7 +72,8 @@ export default defineConfig((configEnv: ConfigEnv) => {
       host: "0.0.0.0",
       proxy: {
         "/api": {
-          target: "http://192.168.1.129:8099",
+          target: "http://192.168.1.129:8099", // 本地
+          // target: "https://jyghgys.showyork.com", // 生产
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ""),
         },

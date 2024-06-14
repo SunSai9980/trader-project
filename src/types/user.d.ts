@@ -45,6 +45,7 @@ export interface User {
   riskType?: RiskType;
   cooperateType?: CooperateType;
   remark?: string;
+  companyProfile?: string;
 }
 
 type Tuple = [

@@ -4,6 +4,7 @@
     <el-divider class="!mt-0" />
     <EntryAgreement :active="active" class="border-none !pt-0" />
     <div class="bg-#f0f2f5"></div>
+    <!-- 审核按钮 -->
     <div class="bg-#fff pb-1">
       <div class="px-5 py-2 flex w-full items-center">
         <span class="text-base font-bold mr-3">详情</span>
@@ -28,6 +29,9 @@
           </div>
           <div>
             <el-button @click="$emit('goList')">回到上一页</el-button>
+            <el-button @click="dialogVisibleRiskType = true"
+              >修改风险类型</el-button
+            >
             <el-button
               type="primary"
               v-if="detailInfo?.state! === State.declare"
@@ -51,6 +55,8 @@
         </div>
       </div>
       <el-divider class="!mt-0" />
+      <!-- 企业信息 -->
+      <!-- start -->
       <div class="px-5 pb-5">
         <el-descriptions
           title="企业信息"
@@ -130,6 +136,9 @@
               fit="cover"
             />
           </el-descriptions-item>
+          <el-descriptions-item label="企业简介">
+            {{ detailInfo!.companyProfile || "-" }}
+          </el-descriptions-item>
           <el-descriptions-item label="备注">
             {{ detailInfo!.remark || "-" }}
           </el-descriptions-item>
@@ -180,7 +189,9 @@
       </div>
     </div>
   </div>
+  <!-- end -->
 
+  <!-- 核验拒绝 -->
   <el-dialog v-model="dialogVisible" title="核验资料" width="500">
     <el-divider class="!mt-0" />
     <el-form ref="formTag" :model="formData" :rules="formRules">
@@ -209,6 +220,7 @@
       </el-form-item>
     </el-form>
   </el-dialog>
+  <!-- 合作审核 -->
   <el-dialog v-model="dialogVisibleEntryAudit" title="合作处理" width="500">
     <el-divider class="!mt-0" />
     <el-form
@@ -238,6 +250,7 @@
       </el-form-item>
     </el-form>
   </el-dialog>
+  <!-- 核验资料审核 -->
   <el-dialog v-model="dialogVisibleExamine" title="核验资料" width="500">
     <el-divider class="!mt-0" />
     <div class="flex flex-items-center">
@@ -246,6 +259,16 @@
       /></el-icon>
       <span class="font-semibold">是否确认该企业的资料核验通过？</span>
     </div>
+    <div class="flex justify-end w-full">
+      <el-button @click="dialogVisibleExamine = false">取 消</el-button>
+      <el-button type="primary" :loading="passLoading" @click="handlePass"
+        >确 定</el-button
+      >
+    </div>
+  </el-dialog>
+  <!-- 修改风险类型 -->
+  <el-dialog v-model="dialogVisibleRiskType" title="修改风险类型" width="500">
+    <el-divider class="!mt-0" />
     <el-form :model="formDataPass" class="mt-2">
       <el-form-item prop="riskType" label="风险类型：">
         <el-radio-group v-model="formDataPass.riskType">
@@ -255,8 +278,11 @@
       </el-form-item>
       <el-form-item class="!mb-0">
         <div class="flex justify-end w-full">
-          <el-button @click="dialogVisibleExamine = false">取 消</el-button>
-          <el-button type="primary" :loading="passLoading" @click="handlePass"
+          <el-button @click="dialogVisibleRiskType = false">取 消</el-button>
+          <el-button
+            type="primary"
+            :loading="handleRiskTypeDisable"
+            @click="handleRiskType"
             >确 定</el-button
           >
         </div>
@@ -321,9 +347,11 @@ const cooperateLabel = computed(() => {
     return "-";
   }
 });
+
+const riskTypeValue = ref(props.detailInfo && props.detailInfo.riskType);
 const riskType = computed(() => {
-  if (props.detailInfo && props.detailInfo.riskType) {
-    switch (props.detailInfo.riskType) {
+  if (riskTypeValue.value) {
+    switch (riskTypeValue.value) {
       case RiskType.highRisk:
         return "高风险";
       case RiskType.loweRisk:
@@ -394,22 +422,46 @@ const active = computed(() => {
     case State.know:
       return 0;
     case State.declare:
+      if (props.detailInfo && props.detailInfo.cooperateType) {
+        return 3;
+      }
       return props.detailInfo!.materialApplyState!;
     case State.successes:
     case State.error:
-      return 3;
+      return 4;
     case State.ShortlistingError:
     case State.ShortlistingSuccess:
-      return 4;
+      return 5;
     default:
       return 0;
   }
 });
 
-const dialogVisibleExamine = ref(false);
+const dialogVisibleRiskType = ref(false);
+const handleRiskTypeDisable = ref(false);
 const formDataPass = reactive<{ riskType: RiskType }>({
   riskType: props.detailInfo!.riskType || RiskType.highRisk,
 });
+const handleRiskType = async () => {
+  handleRiskTypeDisable.value = true;
+  apiUpdateUser({
+    id: props.detailInfo?.id!,
+    riskType: formDataPass.riskType,
+  })
+    .then((_res) => {
+      riskTypeValue.value = formDataPass.riskType;
+      ElMessage({
+        type: "success",
+        message: "风险类型更改成功",
+      });
+    })
+    .finally(() => {
+      dialogVisibleRiskType.value = false;
+      handleRiskTypeDisable.value = false;
+    });
+};
+
+const dialogVisibleExamine = ref(false);
 const passLoading = ref(false);
 const handlePass = async () => {
   if (props.detailInfo && !props.detailInfo.cooperateType) {
@@ -420,13 +472,12 @@ const handlePass = async () => {
   }
   passLoading.value = true;
   const state =
-    formDataPass.riskType === RiskType.loweRisk
+    riskTypeValue.value === RiskType.loweRisk
       ? State.ShortlistingSuccess
       : State.successes;
   apiUpdateUser({
     id: props.detailInfo?.id!,
     state,
-    riskType: formDataPass.riskType,
   })
     .then(() => {
       emits("subNum", props.detailInfo?.state);

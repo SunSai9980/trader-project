@@ -22,6 +22,14 @@
     >
   </div>
   <div
+    v-else-if="user.state === State.declare && user.cooperateType"
+    class="flex justify-center items-center flex-col pt-20"
+  >
+    <el-icon size="60" color="#67C23A"><i-ep-success-filled /></el-icon>
+    <div class="mt-5 text-2xl font-bold">提交成功</div>
+    <p class="mt-2 text-gray-400 text-sm">审核时间3-7个工作日</p>
+  </div>
+  <div
     v-else-if="user.state === State.successes"
     class="flex justify-center items-center flex-col pt-20"
   >
