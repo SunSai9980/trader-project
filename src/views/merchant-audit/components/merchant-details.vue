@@ -138,7 +138,7 @@
               fit="cover"
             />
           </el-descriptions-item>
-          <el-descriptions-item label="企业简介" span="6">
+          <el-descriptions-item label="企业简介" :span="6">
             {{ detailInfo!.companyProfile || "-" }}
           </el-descriptions-item>
           <el-descriptions-item label="备注">
