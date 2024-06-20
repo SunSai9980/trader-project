@@ -27,7 +27,9 @@ const statusComponent = computed(() => {
       component = EntryInformed;
       break;
     case State.declare:
-      if (user.cooperateType) {
+      if (user.materialApplyState === MaterialApplyState.unfinished) {
+        component = EntryMaterials;
+      } else if (user.cooperateType) {
         component = EntryResult;
       } else {
         component = EntryMaterials;
@@ -48,14 +50,18 @@ const statusComponent = computed(() => {
 
 const active = ref<number>(0);
 const initActive = () => {
+  console.log(user);
   switch (user.state) {
     case State.know:
       return 0;
     case State.declare:
-      if (user.cooperateType) {
+      if (user.materialApplyState === MaterialApplyState.unfinished) {
+        return MaterialApplyState.unfinished;
+      } else if (user.cooperateType) {
         return 3;
+      } else {
+        return user.materialApplyState!;
       }
-      return user.materialApplyState!;
     case State.successes:
     case State.error:
       return 4;
@@ -77,6 +83,7 @@ onMounted(async () => {
   if (user.id) {
     const { data } = await apiUserGet(user.id);
     if (data) {
+      console.log("data >>>>", data.cooperateType);
       user.$state = data;
     } else {
       user.$reset();

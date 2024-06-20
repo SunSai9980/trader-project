@@ -14,6 +14,7 @@ export const useUserInfo = defineStore("userInfo", {
       businessLicense: undefined,
       commitment: undefined,
       createTime: undefined,
+      cooperateType: undefined,
       creditCode: undefined,
       deleted: undefined,
       email: undefined,

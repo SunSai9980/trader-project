@@ -326,6 +326,7 @@
             maxlength="500"
             :autosize="{ minRows: 4 }"
             type="textarea"
+            show-word-limit
             placeholder="请填写公司简介"
           />
         </el-form-item>
@@ -368,7 +369,7 @@ import {
   downloadFile,
 } from "@/utils";
 import { State, MaterialApplyState } from "@/enums";
-import { apiUpdateUser } from "@/api/user";
+import { apiUpdateUser, apiCleanCooperate } from "@/api/user";
 import { apiUseCode } from "@/api/common";
 import { UPLOAD_URL } from "@/constants";
 import { User } from "@/types";
@@ -706,6 +707,7 @@ const handleSubmit = async (formEl: FormInstance | undefined) => {
                 materialsForm.operatePermit
               );
             }
+            await apiCleanCooperate(user.id);
             await apiUpdateUser(materialsForm as User);
             if (invitationInfo.code) {
               await apiUseCode(invitationInfo.code);

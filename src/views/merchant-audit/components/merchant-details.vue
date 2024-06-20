@@ -29,7 +29,9 @@
           </div>
           <div>
             <el-button @click="$emit('goList')">回到上一页</el-button>
-            <el-button @click="dialogVisibleRiskType = true"
+            <el-button
+              v-if="showCooperateTypeBtn"
+              @click="dialogVisibleRiskType = true"
               >修改风险类型</el-button
             >
             <el-button
@@ -88,7 +90,7 @@
               </div>
             </el-tooltip>
           </el-descriptions-item>
-          <el-descriptions-item label="风险类型" min-width="80">
+          <el-descriptions-item label="风险类型" width="80">
             {{ riskType }}
           </el-descriptions-item>
           <el-descriptions-item label="推荐人/推荐单位">
@@ -136,7 +138,7 @@
               fit="cover"
             />
           </el-descriptions-item>
-          <el-descriptions-item label="企业简介">
+          <el-descriptions-item label="企业简介" span="6">
             {{ detailInfo!.companyProfile || "-" }}
           </el-descriptions-item>
           <el-descriptions-item label="备注">
@@ -323,6 +325,16 @@ const props = defineProps<{
   pendingNum: number;
   isChairman: boolean;
 }>();
+
+const showCooperateTypeBtn = computed(() => {
+  let bool: boolean;
+  if (props.detailInfo && props.detailInfo.state < State.successes) {
+    bool = true;
+  } else {
+    bool = false;
+  }
+  return bool;
+});
 
 // const mobile = useRoute().query.mobile as string;
 // const isChairman = computed(() => {

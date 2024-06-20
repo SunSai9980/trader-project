@@ -5,13 +5,13 @@
     finish-status="success"
     align-center
   >
-    <el-step title="知晓协议">
+    <el-step title="商户知晓协议">
       <!-- <template #description>
         <div>{{ user.loginMobile! }}</div>
         <div>{{ dayjs(user.createTime).format("YYYY-MM-DD HH:mm") }}</div>
       </template> -->
     </el-step>
-    <el-step title="申报材料">
+    <el-step title="商户申报材料">
       <!-- <template #description>
         <div>{{ user.loginMobile }}</div>
         <div>{{ dayjs(user.createTime).format("YYYY-MM-DD HH:mm") }}</div>

@@ -76,6 +76,15 @@ export const apiUpdateUser = (data: User) => {
 };
 
 /**
+ * 清空合作类型
+ * @param id -用户id
+ * @returns
+ */
+export const apiCleanCooperate = (id: number) => {
+  return http.post({ url: `/merchant/user/clean/cooperate/${id}` });
+};
+
+/**
  * 删除用户（物理删除）
  */
 export const apiDelUser = (id: number) => {
