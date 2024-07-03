@@ -1,9 +1,6 @@
-<!-- <template>
+<template>
   <div v-if="loading">
-    <div
-      v-if="user.materialApplyState === MaterialApplyState.unfinished"
-      class="pb-[64px]"
-    >
+    <div :class="{ 'pb-[64px]': !useCustomBtn }">
       <el-form
         :model="materialsForm"
         ref="formRef"
@@ -332,25 +329,27 @@
         </el-form-item>
       </el-form>
       <div
+        v-if="!useCustomBtn"
         class="mt-6 py-3 px-10 shadow flex items-center fixed bottom-0 right-[20px] left-[220px] bg-#fff"
       >
         <el-button type="primary" @click="handleSubmit(formRef)"
           >提交</el-button
         >
       </div>
-    </div>
-    <div v-else class="flex justify-center items-center flex-col pt-20">
-      <el-icon size="60" color="#67C23A"><i-ep-success-filled /></el-icon>
-      <div class="mt-5 text-2xl font-bold">提交成功</div>
-      <p class="mt-2 text-gray-400 text-sm">请等待审核</p>
+      <div v-else class="flex justify-end">
+        <el-button type="primary" @click="handleSubmit(formRef)"
+          >确认</el-button
+        >
+        <slot name="cancel"></slot>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import entryUpload from "./entry-upload.vue";
+import entryUpload from "@/views/entry-process/components/entry-upload.vue";
 import { Md5 } from "ts-md5";
-import { RiskType, CooperateTime, ServiceRange, CooperateType } from "@/enums";
+import { CooperateTime, ServiceRange } from "@/enums";
 import { SECRET } from "@/constants";
 import type { ResultData } from "@/utils/http/types";
 import {
@@ -361,42 +360,31 @@ import {
   type UploadUserFile,
   type UploadInstance,
 } from "element-plus";
-import { useUserInfo, useInvitationInfo } from "@/store";
+// import { useUserInfo, useInvitationInfo } from "@/store";
 import {
   validatorMobile,
   validatorEmail,
   validatorCreditCode,
   downloadFile,
 } from "@/utils";
-import { State, MaterialApplyState } from "@/enums";
-import { apiUpdateUser, apiCleanCooperate } from "@/api/user";
-import { apiUseCode } from "@/api/common";
-import { UPLOAD_URL } from "@/constants";
-import { User } from "@/types";
 
-interface Materials {
-  id: number;
-  name: string;
-  enterpriseName: string;
-  email: string;
-  mobile: string;
-  idCardFront: string;
-  idCardOpposite: string;
-  businessLicense: string;
-  creditCode: string;
-  operatePermit: { name: string; url: string }[] | string;
-  recommendUser: string;
-  commitment: string;
-  state: State;
-  materialApplyState: MaterialApplyState;
-  servicePrice: number;
-  serviceJoinUserNum: number;
-  serviceRange: ServiceRange;
-  cooperateTime: CooperateTime;
-  riskType?: RiskType;
-  companyProfile: string;
-  cooperateType?: CooperateType;
+import { UPLOAD_URL } from "@/constants";
+import { User, InvitationInfo, Materials } from "@/types";
+
+export interface Props {
+  user: User;
+  invitationInfo: InvitationInfo;
+  useCustomBtn: boolean;
 }
+const props = withDefaults(defineProps<Props>(), {
+  invitationInfo: () => ({
+    code: "",
+    recommendUser: "",
+  }),
+  useCustomBtn: false,
+});
+
+const emits = defineEmits(["onSubmit"]);
 
 const serviceRangeOptions = [
   {
@@ -415,11 +403,11 @@ const serviceRangeOptions = [
 
 const cooperateTimeOptions = [
   {
-    label: "三个月以上",
+    label: "六个月以上",
     value: CooperateTime.moreThanThreeMonths,
   },
   {
-    label: "三个月以下",
+    label: "六个月以下",
     value: CooperateTime.lessThanThreeMonths,
   },
 ];
@@ -431,9 +419,9 @@ const urlList = reactive<string[]>([
   "https://ddup-education.oss-cn-beijing.aliyuncs.com/20240319/f4069c9dc7804d7eb4a2ff2a5214f0a1.png",
   "https://ddup-education.oss-cn-beijing.aliyuncs.com/20240319/6cee3b3aa8974a5793f3e7d884473393.png",
 ]);
-const emits = defineEmits(["stepNext"]);
-let user = useUserInfo();
-let invitationInfo = useInvitationInfo();
+// const emits = defineEmits(["stepNext"]);
+// let user = useUserInfo();
+// let invitationInfo = useInvitationInfo();
 const iconArrowUp1 = ref(true);
 const handleArrowUp1 = () => {
   iconArrowUp1.value = !iconArrowUp1.value;
@@ -454,26 +442,24 @@ const fileList3 = ref<UploadUserFile[]>([]);
 const fileList4 = ref<UploadUserFile[]>([]);
 const fileList5 = ref<UploadUserFile[]>([]);
 const materialsForm = reactive<Materials>({
-  id: user.id,
-  name: user.name!,
-  enterpriseName: user.enterpriseName!,
-  mobile: user.mobile! || user.loginMobile!,
-  email: user.email!,
-  idCardFront: user.idCardFront!,
-  idCardOpposite: user.idCardOpposite!,
-  businessLicense: user.businessLicense!,
-  creditCode: user.creditCode!,
-  operatePermit: user.operatePermit! || [],
-  recommendUser: user.recommendUser! || invitationInfo.recommendUser,
-  commitment: user.commitment!,
-  state: State.declare,
-  materialApplyState: MaterialApplyState.fulfil,
-  servicePrice: user.servicePrice!,
-  serviceJoinUserNum: user.serviceJoinUserNum!,
-  serviceRange: user.serviceRange!,
-  cooperateTime: user.cooperateTime!,
-  companyProfile: user.companyProfile || "",
-  cooperateType: undefined,
+  id: props.user.id,
+  name: props.user.name!,
+  enterpriseName: props.user.enterpriseName!,
+  mobile: props.user.mobile! || props.user.loginMobile!,
+  email: props.user.email!,
+  idCardFront: props.user.idCardFront!,
+  idCardOpposite: props.user.idCardOpposite!,
+  businessLicense: props.user.businessLicense!,
+  creditCode: props.user.creditCode!,
+  operatePermit: props.user.operatePermit! || [],
+  recommendUser:
+    props.user.recommendUser! || props.invitationInfo.recommendUser,
+  commitment: props.user.commitment!,
+  servicePrice: props.user.servicePrice!,
+  serviceJoinUserNum: props.user.serviceJoinUserNum!,
+  serviceRange: props.user.serviceRange!,
+  cooperateTime: props.user.cooperateTime!,
+  companyProfile: props.user.companyProfile || "",
 });
 
 const materialsRules = reactive<FormRules<Materials>>({
@@ -692,33 +678,12 @@ const handleSubmit = async (formEl: FormInstance | undefined) => {
       })
         .then(async () => {
           try {
-            if (
-              materialsForm.serviceRange !== ServiceRange.GrassrootsScope ||
-              materialsForm.servicePrice >= 50000 ||
-              materialsForm.serviceJoinUserNum >= 1000 ||
-              materialsForm.cooperateTime === CooperateTime.moreThanThreeMonths
-            ) {
-              materialsForm.riskType = RiskType.highRisk;
-            } else {
-              materialsForm.riskType = RiskType.loweRisk;
-            }
             if (typeof materialsForm.operatePermit !== "string") {
               materialsForm.operatePermit = JSON.stringify(
                 materialsForm.operatePermit
               );
             }
-            await apiCleanCooperate(user.id);
-            await apiUpdateUser(materialsForm as User);
-            if (invitationInfo.code) {
-              await apiUseCode(invitationInfo.code);
-              invitationInfo.$reset();
-            }
-            ElMessage({
-              type: "success",
-              message: "提交成功",
-            });
-            user.$state = { ...user, ...(materialsForm as User) };
-            emits("stepNext", State.declare, MaterialApplyState.fulfil);
+            emits("onSubmit", materialsForm);
           } catch (e) {
             console.error(e);
           }
@@ -737,56 +702,56 @@ const handleSubmit = async (formEl: FormInstance | undefined) => {
 
 const recommendUserDisabled = ref(false);
 onMounted(() => {
-  if (user.idCardFront) {
+  if (props.user.idCardFront) {
     fileList1.value = [
       {
         name: "1.png",
-        url: user.idCardFront,
+        url: props.user.idCardFront,
       },
     ];
   }
-  if (user.idCardOpposite) {
+  if (props.user.idCardOpposite) {
     fileList2.value = [
       {
         name: "2.png",
-        url: user.idCardOpposite,
+        url: props.user.idCardOpposite,
       },
     ];
   }
-  if (user.businessLicense) {
+  if (props.user.businessLicense) {
     fileList3.value = [
       {
         name: "3.png",
-        url: user.businessLicense,
+        url: props.user.businessLicense,
       },
     ];
   }
-  if (user.commitment) {
+  if (props.user.commitment) {
     try {
-      fileList5.value = JSON.parse(user.commitment);
+      fileList5.value = JSON.parse(props.user.commitment);
     } catch (_e) {
       fileList5.value = [
         {
           name: "承诺书",
-          url: user.commitment,
+          url: props.user.commitment,
         },
       ];
     }
   }
-  if (user.operatePermit) {
+  if (props.user.operatePermit) {
     try {
-      fileList4.value = JSON.parse(user.operatePermit);
+      fileList4.value = JSON.parse(props.user.operatePermit);
     } catch (_e) {
       fileList3.value = [
         {
           name: "4.png",
-          url: user.operatePermit,
+          url: props.user.operatePermit,
         },
       ];
     }
   }
   recommendUserDisabled.value = Boolean(
-    user.recommendUser! || invitationInfo.recommendUser
+    props.user.recommendUser! || props.invitationInfo.recommendUser
   );
   loading.value = true;
 });
@@ -803,92 +768,4 @@ onMounted(() => {
   font-weight: 400;
 }
 </style>
-@/constants -->
-
-<template>
-  <MaterialsEdit
-    :user="user"
-    :invitationInfo="invitationInfo"
-    @onSubmit="handleSubmit"
-  />
-</template>
-
-<script setup lang="ts">
-import {
-  State,
-  MaterialApplyState,
-  RiskType,
-  CooperateTime,
-  ServiceRange,
-} from "@/enums";
-import { apiUpdateUser, apiCleanCooperate } from "@/api/user";
-import { apiUseCode } from "@/api/common";
-import MaterialsEdit from "@/components/materials-edit.vue";
-import { useUserInfo, useInvitationInfo } from "@/store";
-import { Materials, User } from "@/types";
-
-const emits = defineEmits(["stepNext"]);
-
-let user = useUserInfo();
-let invitationInfo = useInvitationInfo();
-
-const judgementRisk = (materialsForm: Materials) => {
-  let num = 0;
-  if (materialsForm.cooperateTime === CooperateTime.moreThanThreeMonths) {
-    num++;
-  }
-  if (materialsForm.servicePrice >= 50000) {
-    num++;
-  }
-  if (materialsForm.serviceJoinUserNum >= 1000) {
-    num++;
-  }
-  if (materialsForm.serviceRange === ServiceRange.LargeCityArea) {
-    num++;
-  }
-  return num;
-};
-
-const handleSubmit = async (materialsForm: Materials) => {
-  ElMessageBox.alert("请认真核对材料，是否确认提交？", "确认", {
-    confirmButtonText: "确认",
-    cancelButtonText: "取消",
-    showCancelButton: true,
-  })
-    .then(async () => {
-      try {
-        let highRiskNum = judgementRisk(materialsForm);
-        if (highRiskNum < 2) {
-          materialsForm.riskType = RiskType.loweRisk;
-        } else {
-          materialsForm.riskType = RiskType.highRisk;
-        }
-        materialsForm.state = State.declare;
-        materialsForm.materialApplyState = MaterialApplyState.fulfil;
-        materialsForm.cooperateType = undefined;
-        await apiCleanCooperate(user.id);
-        await apiUpdateUser(materialsForm as User);
-        if (invitationInfo.code) {
-          await apiUseCode(invitationInfo.code);
-          invitationInfo.$reset();
-        }
-        ElMessage({
-          type: "success",
-          message: "提交成功",
-        });
-        user.$state = { ...user, ...(materialsForm as User) };
-        emits("stepNext", State.declare, MaterialApplyState.fulfil);
-      } catch (e) {
-        console.error(e);
-      }
-    })
-    .catch(() => {
-      ElMessage({
-        type: "info",
-        message: "已取消",
-      });
-    });
-};
-</script>
-
-<style lang="less" scoped></style>
+@/constants

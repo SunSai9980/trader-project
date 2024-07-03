@@ -124,6 +124,24 @@
                 @click="$emit('goDetails', scope.row)"
                 >查看详情</el-button
               >
+              <el-button
+                v-if="!isChairman"
+                type="primary"
+                link
+                @click="handleEditBtn(scope.row)"
+                >编辑</el-button
+              >
+              <el-button
+                type="primary"
+                v-if="
+                  !isChairman &&
+                  !scope.row.cooperateType &&
+                  scope.row.state === State.declare
+                "
+                link
+                @click="handleRejectBtn(scope.row)"
+                >驳回</el-button
+              >
             </el-space>
           </template>
         </el-table-column>
@@ -146,18 +164,63 @@
       </el-pagination>
     </el-config-provider>
   </div>
+  <el-dialog v-model="dialogVisible" :title="userData?.enterpriseName">
+    <MaterialsEdit :user="userData!" useCustomBtn @onSubmit="handleEdit">
+      <template #cancel>
+        <el-button @click="dialogVisible = false">取消</el-button>
+      </template>
+    </MaterialsEdit>
+  </el-dialog>
+
+  <el-dialog v-model="dialogVisibleRefusal" title="核验资料" width="500">
+    <el-divider class="!mt-0" />
+    <el-form ref="formTag" :model="formData" :rules="formRules">
+      <el-form-item prop="reason" label="驳回理由：">
+        <el-input
+          v-model="formData.reason"
+          type="textarea"
+          placeholder="请输入"
+          show-word-limit
+          :maxlength="500"
+          :autosize="{
+            minRows: 5,
+          }"
+        />
+      </el-form-item>
+      <el-form-item class="!mb-0">
+        <div class="flex justify-end w-full">
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button
+            type="primary"
+            :loading="rejectLoading"
+            @click="handleReject(formTag)"
+            >确 定</el-button
+          >
+        </div>
+      </el-form-item>
+    </el-form>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
 import zhCn from "element-plus/es/locale/lang/zh-cn";
 import { Search } from "@element-plus/icons-vue";
-import type { User } from "@/types";
+import type { User, Materials, RefusalObject } from "@/types";
 import { apiDelUser, apiUserList, apiUpdateUser } from "@/api/user";
-import { MaterialApplyState, CooperateType, RiskType, State } from "@/enums";
+import {
+  MaterialApplyState,
+  CooperateType,
+  RiskType,
+  State,
+  RefusalType,
+} from "@/enums";
 import dayjs from "dayjs";
-// import { CHAIRMAN } from "@/constants";
-// import { useRoute } from "vue-router";
+import type { FormInstance, FormRules } from "element-plus";
+import { useRoute } from "vue-router";
 
+import MaterialsEdit from "@/components/materials-edit.vue";
+
+const operator = useRoute().query.mobile as string;
 const props = defineProps<{
   detailInfo?: Required<User>;
   successesNum: number;
@@ -172,11 +235,6 @@ const emits = defineEmits([
   "subNum",
   "updateDetailInfoState",
 ]);
-
-// const mobile = useRoute().query.mobile as string;
-// const isChairman = computed(() => {
-//   return mobile && CHAIRMAN.includes(mobile);
-// });
 
 const spacer = h(ElDivider, { direction: "vertical" });
 const enterpriseName = defineModel<string>("enterpriseName");
@@ -391,6 +449,104 @@ const handleRemark = (item: User) => {
 };
 const handleFocus = (str: string) => {
   currentRemark = str;
+};
+
+const userData = ref<Required<User>>();
+
+/*------------------- 编辑 ------------------------*/
+const dialogVisible = ref(false);
+const handleEditBtn = (data: Required<User>) => {
+  userData.value = data;
+  dialogVisible.value = true;
+};
+const handleEdit = (materialsForm: Materials) => {
+  apiUpdateUser(materialsForm as User)
+    .then(() => {
+      let key: keyof Materials;
+      for (key in materialsForm) {
+        if (userData.value && userData.value.hasOwnProperty(key)) {
+          if (userData.value[key] === materialsForm[key]) {
+            continue;
+          } else {
+            (userData.value[key] as unknown) = materialsForm[key] as unknown;
+          }
+        }
+      }
+      ElMessage({
+        type: "success",
+        message: "编辑成功",
+      });
+    })
+    .finally(() => {
+      dialogVisible.value = false;
+    });
+};
+
+/*------------------- 驳回 ------------------------*/
+const dialogVisibleRefusal = ref(false);
+const formTag = ref<FormInstance>();
+const formData = reactive<{ reason: string }>({
+  reason: "",
+});
+const formRules = reactive<FormRules<{ reason: string }>>({
+  reason: [{ required: true, message: "请输入拒绝理由", trigger: "blur" }],
+});
+const rejectLoading = ref(false);
+const handleRejectBtn = (data: Required<User>) => {
+  userData.value = data;
+  dialogVisibleRefusal.value = true;
+};
+const handleReject = async (formEl: FormInstance | undefined) => {
+  if (!formEl) return;
+  await formEl.validate(async (valid, fields) => {
+    if (valid && userData.value) {
+      rejectLoading.value = true;
+      let obj: RefusalObject = {
+        message: formData.reason,
+        createTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+        type: RefusalType.MaterialRefusal,
+        operator,
+      };
+      let reasonList: RefusalObject[] = [];
+      try {
+        if (userData.value.reason) {
+          reasonList = JSON.parse(userData.value.reason) as RefusalObject[];
+        }
+        reasonList.push(obj);
+      } catch (e) {
+        if (userData.value.reason) {
+          let oldObj: RefusalObject = {
+            message: userData.value.reason,
+            createTime: "",
+            operator: "",
+            type: RefusalType.AuditsRefusal,
+          };
+          reasonList.push(oldObj, obj);
+        } else {
+          reasonList.push(obj);
+        }
+      }
+      apiUpdateUser({
+        id: userData.value.id,
+        state: State.error,
+        reason: JSON.stringify(reasonList),
+      })
+        .then((_res) => {
+          emits("subNum", State.declare);
+          if (userData.value) userData.value.state = State.error;
+          ElMessage({
+            type: "success",
+            message: "核验拒绝成功",
+          });
+        })
+        .finally(() => {
+          dialogVisible.value = false;
+          rejectLoading.value = false;
+        });
+    } else {
+      console.log("error submit!", fields);
+    }
+  });
 };
 
 onMounted(async () => {

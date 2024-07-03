@@ -39,3 +39,9 @@ export enum CooperateType {
   BirthdayBenefits,
   HuishiCooperation,
 }
+
+export enum RefusalType {
+  MaterialRefusal,
+  AuditsRefusal,
+  CooperativeRefusal,
+}

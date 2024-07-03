@@ -23,18 +23,25 @@
         <div>{{ dayjs(user.createTime).format("YYYY-MM-DD HH:mm") }}</div>
       </template> -->
     </el-step>
-    <el-step title="市教育工会审批">
+    <el-step title="市教育工会审核材料">
       <!-- <template #description>
         <div>管理员</div>
         <div>{{ dayjs(user.createTime).format("YYYY-MM-DD HH:mm") }}</div>
       </template> -->
     </el-step>
-    <el-step title="完成">
-      <!-- <template #description>
-        <div>管理员</div>
-        <div>{{ dayjs(user.createTime).format("YYYY-MM-DD HH:mm") }}</div>
-      </template> -->
+
+    <el-step class="relative" title="市教育工会同意合作">
+      <template #description>
+        <div
+          class="absolute top-[-10px] left-0 translate-x-[-50%] text-#8d8dae"
+        >
+          商户等待评审
+        </div>
+      </template>
     </el-step>
+    <el-step v-if="isFullProcess" title="上传协议"></el-step>
+    <el-step v-if="isFullProcess" title="完成"></el-step>
+    <!-- <div>商户等待评审</div> -->
   </el-steps>
 </template>
 
@@ -42,7 +49,10 @@
 // import { defineProps } from "vue";
 // import { useUserInfo } from "@/store";
 // import dayjs from "dayjs";
-withDefaults(defineProps<{ active: number }>(), { active: 0 });
+withDefaults(defineProps<{ active: number; isFullProcess?: boolean }>(), {
+  active: 0,
+  isFullProcess: false,
+});
 
 // const user  = useUserInfo();
 </script>

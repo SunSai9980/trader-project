@@ -13,7 +13,7 @@
       <div class="mt-2 flex">
         <el-icon color="#F56C6C"><i-ep-circle-close-filled /></el-icon>
         <div class="ml-3 text-sm text-slate-500">
-          {{ user.reason }}
+          {{ reason }}
         </div>
       </div>
     </div>
@@ -62,6 +62,7 @@
 import { State, MaterialApplyState } from "@/enums";
 import { apiUpdateUser } from "@/api/user";
 import { useUserInfo } from "@/store";
+import type { RefusalObject } from "@/types";
 
 const emits = defineEmits(["stepNext"]);
 const user = useUserInfo();
@@ -84,6 +85,18 @@ const handleRevisitError = async () => {
   });
   emits("stepNext", State.know, MaterialApplyState.unfinished);
 };
+
+const reason = computed(() => {
+  let text: string;
+  try {
+    let arr = JSON.parse(user.reason!) as RefusalObject[];
+    let obj = arr.pop();
+    text = obj?.message!;
+  } catch (_e) {
+    text = user.reason!;
+  }
+  return text;
+});
 </script>
 
 <style scoped lang="scss"></style>

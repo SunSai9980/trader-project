@@ -34,6 +34,7 @@ declare module 'vue' {
     ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
     ElOption: typeof import('element-plus/es')['ElOption']
     ElPagination: typeof import('element-plus/es')['ElPagination']
+    ElPopover: typeof import('element-plus/es')['ElPopover']
     ElRadio: typeof import('element-plus/es')['ElRadio']
     ElRadioGroup: typeof import('element-plus/es')['ElRadioGroup']
     ElResult: typeof import('element-plus/es')['ElResult']
@@ -53,7 +54,11 @@ declare module 'vue' {
     IEpCircleCloseFilled: typeof import('~icons/ep/circle-close-filled')['default']
     IEpPlus: typeof import('~icons/ep/plus')['default']
     IEpSuccessFilled: typeof import('~icons/ep/success-filled')['default']
+    MaterialsEdit: typeof import('./components/materials-edit.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+  }
+  export interface ComponentCustomProperties {
+    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }

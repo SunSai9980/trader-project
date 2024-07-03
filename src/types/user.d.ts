@@ -46,6 +46,7 @@ export interface User {
   cooperateType?: CooperateType;
   remark?: string;
   companyProfile?: string;
+  uploadAgreement?: string;
 }
 
 type Tuple = [
@@ -77,4 +78,28 @@ export interface IUserListParma {
   current: number;
   size: number;
   descs: string;
+}
+
+export interface Materials {
+  id: number;
+  name: string;
+  enterpriseName: string;
+  email: string;
+  mobile: string;
+  idCardFront: string;
+  idCardOpposite: string;
+  businessLicense: string;
+  creditCode: string;
+  operatePermit: { name: string; url: string }[] | string;
+  recommendUser: string;
+  commitment: string;
+  state?: State;
+  materialApplyState?: MaterialApplyState;
+  servicePrice: number;
+  serviceJoinUserNum: number;
+  serviceRange: ServiceRange;
+  cooperateTime: CooperateTime;
+  riskType?: RiskType;
+  companyProfile: string;
+  cooperateType?: CooperateType;
 }

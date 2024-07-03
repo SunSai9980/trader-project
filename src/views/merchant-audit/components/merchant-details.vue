@@ -2,7 +2,11 @@
   <div>
     <div class="px-5 py-2 font-semibold text-lg">流程进度</div>
     <el-divider class="!mt-0" />
-    <EntryAgreement :active="active" class="border-none !pt-0" />
+    <EntryAgreement
+      is-full-process
+      :active="active"
+      class="border-none !pt-0"
+    />
     <div class="bg-#f0f2f5"></div>
     <!-- 审核按钮 -->
     <div class="bg-#fff pb-1">
@@ -43,9 +47,15 @@
             <el-button
               type="danger"
               plain
-              v-if="detailInfo?.state! === State.declare"
+              v-if="detailInfo?.state! === State.declare && detailInfo?.cooperateType"
               @click="dialogVisible = true"
               >驳回</el-button
+            >
+            <el-button
+              type="primary"
+              v-if="detailInfo?.state! === State.ShortlistingSuccess && !detailInfo?.uploadAgreement"
+              @click="dialogVisibleProtocols = true"
+              >上传协议</el-button
             >
             <el-button
               type="primary"
@@ -57,10 +67,27 @@
         </div>
       </div>
       <el-divider class="!mt-0" />
-      <!-- 企业信息 -->
+
       <!-- start -->
       <div class="px-5 pb-5">
+        <!-- 驳回原因 -->
         <el-descriptions
+          title="历史驳回原因"
+          direction="vertical"
+          :column="1"
+          size="default"
+          border
+        >
+          <el-descriptions-item label="原因">
+            <div v-for="(item, index) in reasonList" :key="index">
+              {{ index + 1 }}.{{ item.message }} {{ item.createTime }}
+              {{ getOperator(item.operator) }}
+            </div>
+          </el-descriptions-item>
+        </el-descriptions>
+        <!-- 企业信息 -->
+        <el-descriptions
+          class="mt-10"
           title="企业信息"
           direction="vertical"
           :column="9"
@@ -90,7 +117,18 @@
               </div>
             </el-tooltip>
           </el-descriptions-item>
-          <el-descriptions-item label="风险类型" width="80">
+          <el-descriptions-item label="风险类型" width="100">
+            <template #label>
+              <div class="flex items-center">
+                风险类型
+                <el-icon
+                  ref="iconRef"
+                  v-click-outside="onClickOutside"
+                  class="ml-1 cursor-pointer"
+                  ><QuestionFilled
+                /></el-icon>
+              </div>
+            </template>
             {{ riskType }}
           </el-descriptions-item>
           <el-descriptions-item label="推荐人/推荐单位">
@@ -188,6 +226,30 @@
             />
           </el-descriptions-item>
         </el-descriptions>
+        <el-descriptions
+          title="协议"
+          direction="vertical"
+          class="mt-10"
+          :column="1"
+          size="default"
+          border
+        >
+          <el-descriptions-item label="内容">
+            <el-image
+              class="mr-5"
+              v-for="(item, idex) in uploadAgreement"
+              :key="idex"
+              style="width: 150px; height: 150px"
+              :src="item.url"
+              :zoom-rate="1.2"
+              :max-scale="7"
+              :min-scale="0.2"
+              :preview-src-list="uploadAgreementArr"
+              :initial-index="idex"
+              fit="cover"
+            />
+          </el-descriptions-item>
+        </el-descriptions>
       </div>
     </div>
   </div>
@@ -268,6 +330,38 @@
       >
     </div>
   </el-dialog>
+  <!-- 上传协议 -->
+  <el-dialog v-model="dialogVisibleProtocols" title="上传协议" width="500">
+    <el-divider class="!mt-0" />
+    <div>
+      <EntryUpload
+        :limit="999"
+        multiple
+        :fileList="fileList"
+        accept=".png,.jpg"
+        @on-success="handleSuccess"
+        @before-upload="beforeUpload"
+        @onRemove="handleRemove"
+      >
+        <div class="flex flex-col justify-center items-center">
+          <el-icon><i-ep-plus /></el-icon>
+        </div>
+      </EntryUpload>
+      <div class="text-#aaaaaa">注：仅支持jpg、png格式</div>
+    </div>
+    <template #footer>
+      <div>
+        <el-button @click="dialogVisibleProtocols = false">取消</el-button>
+        <el-button
+          type="primary"
+          :loading="protocolsLoading"
+          @click="handleProtocols"
+        >
+          确认
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
   <!-- 修改风险类型 -->
   <el-dialog v-model="dialogVisibleRiskType" title="修改风险类型" width="500">
     <el-divider class="!mt-0" />
@@ -291,25 +385,86 @@
       </el-form-item>
     </el-form>
   </el-dialog>
+  <el-popover
+    ref="popoverRef"
+    :virtual-ref="iconRef"
+    trigger="click"
+    virtual-triggering
+    placement="bottom"
+    width="450"
+  >
+    <div class="text-center">此为平台自动判断高、低风险标准</div>
+    <table class="border m-auto">
+      <thead>
+        <tr>
+          <td></td>
+          <td class="bg-#f9cbaa">高风险</td>
+          <td class="bg-#f9cbaa" colspan="2">低风险</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="bg-#e3f2d9">金额（元）</td>
+          <td>&gt;=50000</td>
+          <td colspan="2">&lt;50000</td>
+        </tr>
+        <tr>
+          <td class="bg-#e3f2d9">参与人数（人）</td>
+          <td>&gt;=1000</td>
+          <td colspan="2">&lt;1000</td>
+        </tr>
+        <tr>
+          <td class="bg-#e3f2d9">范围</td>
+          <td>大市范围</td>
+          <td>区（县、市）范围</td>
+          <td>基层单位范围</td>
+        </tr>
+        <tr>
+          <td class="bg-#e3f2d9">合作时间</td>
+          <td>六个月以上</td>
+          <td colspan="2">六个月以下</td>
+        </tr>
+        <tr>
+          <td colspan="4">
+            标准：以上<span class="text-red-600">两项</span
+            >达到高风险内容会被判断为<span class="text-red-600">高风险</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </el-popover>
 </template>
 
 <script setup lang="ts">
 import EntryAgreement from "../../entry-process/components/entry-agreement.vue";
-import { WarningFilled } from "@element-plus/icons-vue";
-import type { User } from "@/types";
+import { WarningFilled, QuestionFilled } from "@element-plus/icons-vue";
+import type { User, RefusalObject } from "@/types";
 import {
   State,
   RiskType,
   CooperateTime,
   ServiceRange,
   CooperateType,
+  RefusalType,
 } from "@/enums";
 import { downloadFile } from "@/utils";
 import { apiUpdateUser } from "@/api/user";
-import type { FormInstance, FormRules } from "element-plus";
-import { computed } from "vue";
+import type {
+  FormInstance,
+  FormRules,
+  UploadFile,
+  UploadProps,
+  UploadUserFile,
+} from "element-plus";
+import { computed, ref, unref } from "vue";
 import { OPERATIONMOBILE } from "@/constants";
 import { apiSendMessage } from "@/api/common";
+import { ClickOutside as vClickOutside } from "element-plus";
+import dayjs from "dayjs";
+import { useRoute } from "vue-router";
+import { PLATFORMS } from "@/constants";
+
+import EntryUpload from "@/views/entry-process/components/entry-upload.vue";
 
 const emits = defineEmits([
   "goList",
@@ -336,11 +491,32 @@ const showCooperateTypeBtn = computed(() => {
   return bool;
 });
 
+const operator = useRoute().query.mobile as string;
+const iconRef = ref();
+const popoverRef = ref();
+const onClickOutside = () => {
+  unref(popoverRef).popperRef?.delayHide?.();
+};
 // const mobile = useRoute().query.mobile as string;
 // const isChairman = computed(() => {
 //   return mobile && CHAIRMAN.includes(mobile);
 // });
-
+const uploadAgreement = computed(() => {
+  let list = [];
+  if (props.detailInfo && props.detailInfo.uploadAgreement) {
+    list = JSON.parse(props.detailInfo.uploadAgreement);
+  } else {
+    if (uploadResult) {
+      list = fileList.value;
+    }
+  }
+  return list;
+});
+const uploadAgreementArr = computed(() => {
+  return uploadAgreement.value.map(
+    (it: { url: string; name: string }) => it.url
+  );
+});
 const cooperateLabel = computed(() => {
   if (props.detailInfo && props.detailInfo.cooperateType) {
     switch (props.detailInfo.cooperateType) {
@@ -428,7 +604,7 @@ try {
     },
   ];
 }
-
+console.log("222", uploadAgreement.value);
 const active = computed(() => {
   switch (props.detailInfo!.state) {
     case State.know:
@@ -437,18 +613,26 @@ const active = computed(() => {
       if (props.detailInfo && props.detailInfo.cooperateType) {
         return 3;
       }
-      return props.detailInfo!.materialApplyState!;
+      return props.detailInfo?.materialApplyState!;
     case State.successes:
     case State.error:
       return 4;
     case State.ShortlistingError:
     case State.ShortlistingSuccess:
+      // 需要判断是否已上传协议
+      if (
+        uploadAgreement.value &&
+        props.detailInfo!.state === State.ShortlistingSuccess
+      ) {
+        return 7;
+      }
       return 5;
     default:
       return 0;
   }
 });
 
+/*-------------------- 风险类型 -----------------------*/
 const dialogVisibleRiskType = ref(false);
 const handleRiskTypeDisable = ref(false);
 const formDataPass = reactive<{ riskType: RiskType }>({
@@ -473,6 +657,7 @@ const handleRiskType = async () => {
     });
 };
 
+/*-------------------- 核验通过 -----------------------*/
 const dialogVisibleExamine = ref(false);
 const passLoading = ref(false);
 const handlePass = async () => {
@@ -507,6 +692,23 @@ const handlePass = async () => {
     });
 };
 
+/*-------------------- 驳回、核验拒绝 -----------------------*/
+let reasonList = ref<RefusalObject[]>([]);
+try {
+  if (props.detailInfo && props.detailInfo.reason) {
+    reasonList.value = JSON.parse(props.detailInfo.reason) as RefusalObject[];
+  }
+} catch (e) {
+  if (props.detailInfo && props.detailInfo.reason) {
+    let oldObj: RefusalObject = {
+      message: props.detailInfo.reason,
+      createTime: "",
+      operator: "",
+      type: RefusalType.AuditsRefusal,
+    };
+    reasonList.value.unshift(oldObj);
+  }
+}
 const dialogVisible = ref(false);
 const formTag = ref<FormInstance>();
 const formData = reactive<{ reason: string }>({
@@ -527,10 +729,17 @@ const handleReject = async (formEl: FormInstance | undefined) => {
   await formEl.validate(async (valid, fields) => {
     if (valid) {
       rejectLoading.value = true;
+      let obj: RefusalObject = {
+        message: formData.reason,
+        createTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+        type: RefusalType.MaterialRefusal,
+        operator,
+      };
+      reasonList.value.push(obj);
       apiUpdateUser({
         id: props.detailInfo?.id!,
         state: State.error,
-        reason: formData.reason,
+        reason: JSON.stringify(reasonList.value),
       })
         .then((_res) => {
           emits("subNum", props.detailInfo?.state);
@@ -552,6 +761,17 @@ const handleReject = async (formEl: FormInstance | undefined) => {
   });
 };
 
+const getOperator = (operator: string) => {
+  let operatorName: string;
+  if (PLATFORMS.includes(operator)) {
+    operatorName = "平台";
+  } else {
+    operatorName = "市教育工会";
+  }
+  return operatorName;
+};
+
+/*-------------------- 合作处理 -----------------------*/
 const dialogVisibleEntryAudit = ref(false);
 const formDataEntryAuditTag = ref<FormInstance>();
 const formDataEntryAudit = reactive<{ state?: State }>({
@@ -596,6 +816,49 @@ const handleEntryAudit = async (formEl: FormInstance | undefined) => {
   });
 };
 
+/*-------------------- 上传协议 -----------------------*/
+const fileList = ref<UploadUserFile[]>([]);
+const dialogVisibleProtocols = ref(false);
+const protocolsLoading = ref(false);
+const beforeUpload = (file: UploadFile) => {
+  const fileName = file.name;
+  const fileType = fileName.substring(fileName.lastIndexOf("."));
+  if (fileType === ".jpg" || fileType === ".png") {
+    return true;
+  } else {
+    ElMessage.error("不是,.png,.jpg文件,请上传正确的图片类型");
+    return false;
+  }
+};
+const handleRemove: UploadProps["onRemove"] = (uploadFile, _uploadFiles) => {
+  fileList.value = fileList.value.filter(
+    (f) => f.url !== (uploadFile.response as { message: string }).message
+  );
+};
+const handleSuccess: UploadProps["onSuccess"] = (response) => {
+  fileList.value.push(response);
+};
+let uploadResult = false;
+const handleProtocols = () => {
+  protocolsLoading.value = true;
+  apiUpdateUser({
+    id: props.detailInfo?.id!,
+    uploadAgreement: JSON.stringify(fileList.value),
+  })
+    .then(() => {
+      uploadResult = true;
+      ElMessage({
+        type: "success",
+        message: "上传成功",
+      });
+    })
+    .finally(() => {
+      protocolsLoading.value = false;
+      dialogVisibleProtocols.value = false;
+    });
+};
+
+/*-------------------- 发送短信 -----------------------*/
 let isSend = true;
 const sendMessage = (message: string) => {
   if (props.isChairman && isSend) {
@@ -613,5 +876,12 @@ const sendMessage = (message: string) => {
 <style scoped lang="scss">
 :deep(label) {
   font-weight: 400;
+}
+table {
+  td {
+    text-align: center;
+    border: 1px solid gray;
+    padding: 5px;
+  }
 }
 </style>
