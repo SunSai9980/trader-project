@@ -189,7 +189,7 @@
       </el-form-item>
       <el-form-item class="!mb-0">
         <div class="flex justify-end w-full">
-          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button @click="dialogVisibleRefusal = false">取 消</el-button>
           <el-button
             type="primary"
             :loading="rejectLoading"
@@ -540,7 +540,7 @@ const handleReject = async (formEl: FormInstance | undefined) => {
           });
         })
         .finally(() => {
-          dialogVisible.value = false;
+          dialogVisibleRefusal.value = false;
           rejectLoading.value = false;
         });
     } else {

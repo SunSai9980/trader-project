@@ -807,10 +807,16 @@ onMounted(() => {
 
 <template>
   <MaterialsEdit
+    v-if="user.materialApplyState === MaterialApplyState.unfinished"
     :user="user"
     :invitationInfo="invitationInfo"
     @onSubmit="handleSubmit"
   />
+  <div v-else class="flex justify-center items-center flex-col pt-20">
+    <el-icon size="60" color="#67C23A"><i-ep-success-filled /></el-icon>
+    <div class="mt-5 text-2xl font-bold">提交成功</div>
+    <p class="mt-2 text-gray-400 text-sm">审核时间3-7个工作日</p>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -850,44 +856,31 @@ const judgementRisk = (materialsForm: Materials) => {
 };
 
 const handleSubmit = async (materialsForm: Materials) => {
-  ElMessageBox.alert("请认真核对材料，是否确认提交？", "确认", {
-    confirmButtonText: "确认",
-    cancelButtonText: "取消",
-    showCancelButton: true,
-  })
-    .then(async () => {
-      try {
-        let highRiskNum = judgementRisk(materialsForm);
-        if (highRiskNum < 2) {
-          materialsForm.riskType = RiskType.loweRisk;
-        } else {
-          materialsForm.riskType = RiskType.highRisk;
-        }
-        materialsForm.state = State.declare;
-        materialsForm.materialApplyState = MaterialApplyState.fulfil;
-        materialsForm.cooperateType = undefined;
-        await apiCleanCooperate(user.id);
-        await apiUpdateUser(materialsForm as User);
-        if (invitationInfo.code) {
-          await apiUseCode(invitationInfo.code);
-          invitationInfo.$reset();
-        }
-        ElMessage({
-          type: "success",
-          message: "提交成功",
-        });
-        user.$state = { ...user, ...(materialsForm as User) };
-        emits("stepNext", State.declare, MaterialApplyState.fulfil);
-      } catch (e) {
-        console.error(e);
-      }
-    })
-    .catch(() => {
-      ElMessage({
-        type: "info",
-        message: "已取消",
-      });
+  try {
+    let highRiskNum = judgementRisk(materialsForm);
+    if (highRiskNum < 2) {
+      materialsForm.riskType = RiskType.loweRisk;
+    } else {
+      materialsForm.riskType = RiskType.highRisk;
+    }
+    materialsForm.state = State.declare;
+    materialsForm.materialApplyState = MaterialApplyState.fulfil;
+    materialsForm.cooperateType = undefined;
+    await apiCleanCooperate(user.id);
+    await apiUpdateUser(materialsForm as User);
+    if (invitationInfo.code) {
+      await apiUseCode(invitationInfo.code);
+      invitationInfo.$reset();
+    }
+    ElMessage({
+      type: "success",
+      message: "提交成功",
     });
+    user.$state = { ...user, ...(materialsForm as User) };
+    emits("stepNext", State.declare, MaterialApplyState.fulfil);
+  } catch (e) {
+    console.error(e);
+  }
 };
 </script>
 

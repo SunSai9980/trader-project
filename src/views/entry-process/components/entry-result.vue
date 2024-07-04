@@ -4,7 +4,9 @@
     class="flex justify-center items-center flex-col py-20"
   >
     <el-icon size="60" color="#F56C6C"><i-ep-circle-close-filled /></el-icon>
-    <div class="mt-5 text-2xl font-bold">核验失败</div>
+    <div class="mt-5 text-2xl font-bold">
+      {{ user.cooperateType ? "审核失败" : "核验失败" }}
+    </div>
     <p class="mt-2 text-gray-400 text-sm">
       请核对并修改以下信息后，再重新提交。
     </p>
@@ -34,17 +36,19 @@
     class="flex justify-center items-center flex-col pt-20"
   >
     <el-icon size="60" color="#67C23A"><i-ep-success-filled /></el-icon>
-    <div class="mt-5 text-2xl font-bold">核验成功</div>
-    <p class="mt-2 text-gray-400 text-sm">您提交的资料已通过核验</p>
+    <div class="mt-5 text-2xl font-bold">审核成功</div>
+    <p class="mt-2 text-gray-400 text-sm">
+      宁波市教育工会已通过您的资料审批，平台将于3-7个工作日内联系您参加线下评审会议事宜。
+    </p>
   </div>
   <div
     v-else-if="user.state === State.ShortlistingSuccess"
     class="flex justify-center items-center flex-col py-20"
   >
     <el-icon size="60" color="#67C23A"><i-ep-success-filled /></el-icon>
-    <div class="mt-5 text-2xl font-bold">申请完成</div>
+    <div class="mt-5 text-2xl font-bold">合作成功</div>
     <p class="mt-2 text-gray-400 text-sm">
-      您的合作申请已通过，平台将于7个工作日内联系您确认签约事宜。
+      宁波市教育工会已同意您的惠师合作申请，平台将于3-7个工作日内联系您确认签约事宜。
     </p>
     <!-- <el-button type="primary" class="mt-5" @click="goLogin">前往登录</el-button> -->
   </div>

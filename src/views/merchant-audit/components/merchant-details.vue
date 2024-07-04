@@ -15,10 +15,12 @@
         <div class="flex flex-1 justify-between items-center">
           <div class="flex">
             <el-tag type="success" v-if="detailInfo?.state! === State.successes"
-              >核验通过</el-tag
+              >审核成功</el-tag
             >
-            <el-tag type="danger" v-else-if="detailInfo?.state! === State.error"
-              >核验失败</el-tag
+            <el-tag
+              type="danger"
+              v-else-if="detailInfo?.state! === State.error"
+              >{{ detailInfo?.cooperateType ? "审核失败" : "核验失败" }}</el-tag
             >
             <el-tag
               type="success"
@@ -53,7 +55,7 @@
             >
             <el-button
               type="primary"
-              v-if="detailInfo?.state! === State.ShortlistingSuccess && !detailInfo?.uploadAgreement"
+              v-if="detailInfo?.state! === State.ShortlistingSuccess && uploadAgreement.length < 1"
               @click="dialogVisibleProtocols = true"
               >上传协议</el-button
             >
@@ -388,9 +390,9 @@
   <el-popover
     ref="popoverRef"
     :virtual-ref="iconRef"
-    trigger="click"
+    trigger="hover"
     virtual-triggering
-    placement="bottom"
+    placement="top"
     width="450"
   >
     <div class="text-center">此为平台自动判断高、低风险标准</div>
@@ -494,19 +496,16 @@ const showCooperateTypeBtn = computed(() => {
 const operator = useRoute().query.mobile as string;
 const iconRef = ref();
 const popoverRef = ref();
+let uploadResult = ref(false);
 const onClickOutside = () => {
   unref(popoverRef).popperRef?.delayHide?.();
 };
-// const mobile = useRoute().query.mobile as string;
-// const isChairman = computed(() => {
-//   return mobile && CHAIRMAN.includes(mobile);
-// });
 const uploadAgreement = computed(() => {
   let list = [];
   if (props.detailInfo && props.detailInfo.uploadAgreement) {
     list = JSON.parse(props.detailInfo.uploadAgreement);
   } else {
-    if (uploadResult) {
+    if (uploadResult.value) {
       list = fileList.value;
     }
   }
@@ -553,9 +552,9 @@ const cooperateTime = computed(() => {
   if (props.detailInfo!.cooperateTime) {
     switch (props.detailInfo!.cooperateTime) {
       case CooperateTime.moreThanThreeMonths:
-        return "三个月以上";
+        return "六个月以上";
       case CooperateTime.lessThanThreeMonths:
-        return "三个月以下";
+        return "六个月以下";
     }
   } else {
     return "-";
@@ -569,7 +568,7 @@ const serviceRange = computed(() => {
       case ServiceRange.CountyScope:
         return "区（县、市）范围";
       case ServiceRange.GrassrootsScope:
-        return "基层范围";
+        return "基层单位范围";
     }
   } else {
     return "-";
@@ -604,7 +603,6 @@ try {
     },
   ];
 }
-console.log("222", uploadAgreement.value);
 const active = computed(() => {
   switch (props.detailInfo!.state) {
     case State.know:
@@ -616,12 +614,15 @@ const active = computed(() => {
       return props.detailInfo?.materialApplyState!;
     case State.successes:
     case State.error:
-      return 4;
+      if (props.detailInfo && !props.detailInfo.cooperateType) {
+        return 3;
+      } else {
+        return 4;
+      }
     case State.ShortlistingError:
     case State.ShortlistingSuccess:
-      // 需要判断是否已上传协议
       if (
-        uploadAgreement.value &&
+        uploadAgreement.value.length > 0 &&
         props.detailInfo!.state === State.ShortlistingSuccess
       ) {
         return 7;
@@ -838,7 +839,6 @@ const handleRemove: UploadProps["onRemove"] = (uploadFile, _uploadFiles) => {
 const handleSuccess: UploadProps["onSuccess"] = (response) => {
   fileList.value.push(response);
 };
-let uploadResult = false;
 const handleProtocols = () => {
   protocolsLoading.value = true;
   apiUpdateUser({
@@ -846,7 +846,7 @@ const handleProtocols = () => {
     uploadAgreement: JSON.stringify(fileList.value),
   })
     .then(() => {
-      uploadResult = true;
+      uploadResult.value = true;
       ElMessage({
         type: "success",
         message: "上传成功",
