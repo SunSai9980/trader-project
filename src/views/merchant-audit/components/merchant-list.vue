@@ -165,7 +165,12 @@
     </el-config-provider>
   </div>
   <el-dialog v-model="dialogVisible" :title="userData?.enterpriseName">
-    <MaterialsEdit :user="userData!" useCustomBtn @onSubmit="handleEdit">
+    <MaterialsEdit
+      v-if="dialogVisible"
+      :user="userData!"
+      useCustomBtn
+      @onSubmit="handleEdit"
+    >
       <template #cancel>
         <el-button @click="dialogVisible = false">取消</el-button>
       </template>
