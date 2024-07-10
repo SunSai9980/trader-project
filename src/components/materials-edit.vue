@@ -402,13 +402,26 @@ const serviceRangeOptions = [
 ];
 
 const cooperateTimeOptions = [
+
+    {
+    label: "一个月",
+    value: CooperateTime.OneMonth,
+  },
   {
-    label: "六个月以上",
+    label: "三个月",
+    value: CooperateTime.ThreeMonths,
+  },
+  {
+    label: "六个月",
     value: CooperateTime.moreThanThreeMonths,
   },
   {
-    label: "六个月以下",
-    value: CooperateTime.lessThanThreeMonths,
+    label: "长期合作",
+    value: CooperateTime.LongCooperation,
+  },
+  {
+    label: "其他",
+    value: CooperateTime.Other,
   },
 ];
 

@@ -400,34 +400,37 @@
       <thead>
         <tr>
           <td></td>
-          <td class="bg-#f9cbaa">高风险</td>
+          <td class="bg-#f9cbaa" colspan="3">高风险</td>
           <td class="bg-#f9cbaa" colspan="2">低风险</td>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td class="bg-#e3f2d9">金额（元）</td>
-          <td>&gt;=50000</td>
+          <td colspan="3">&gt;=50000</td>
           <td colspan="2">&lt;50000</td>
         </tr>
         <tr>
           <td class="bg-#e3f2d9">参与人数（人）</td>
-          <td>&gt;=1000</td>
+          <td colspan="3">&gt;=1000</td>
           <td colspan="2">&lt;1000</td>
         </tr>
         <tr>
           <td class="bg-#e3f2d9">范围</td>
-          <td>大市范围</td>
+          <td colspan="3">大市范围</td>
           <td>区（县、市）范围</td>
           <td>基层单位范围</td>
         </tr>
         <tr>
           <td class="bg-#e3f2d9">合作时间</td>
-          <td>六个月以上</td>
-          <td colspan="2">六个月以下</td>
+          <td>六个月</td>
+          <td>长期合作</td>
+          <td>其他</td>
+          <td>一个月</td>
+          <td>三个月</td>
         </tr>
         <tr>
-          <td colspan="4">
+          <td colspan="6">
             标准：以上<span class="text-red-600">两项</span
             >达到高风险内容会被判断为<span class="text-red-600">高风险</span>
           </td>
@@ -549,16 +552,39 @@ const riskType = computed(() => {
   }
 });
 const cooperateTime = computed(() => {
-  if (props.detailInfo!.cooperateTime) {
-    switch (props.detailInfo!.cooperateTime) {
-      case CooperateTime.moreThanThreeMonths:
-        return "六个月以上";
-      case CooperateTime.lessThanThreeMonths:
-        return "六个月以下";
-    }
-  } else {
-    return "-";
+  let text: string;
+  switch (props.detailInfo!.cooperateTime) {
+    case CooperateTime.moreThanThreeMonths:
+      text = "六个月";
+      break;
+    case CooperateTime.ThreeMonths:
+      text = "三个月";
+      break;
+    case CooperateTime.OneMonth:
+      text = "一个月";
+      break;
+    case CooperateTime.LongCooperation:
+      text = "长期合作";
+      break;
+    case CooperateTime.Other:
+      text = "其他";
+      break;
+    default:
+      text = "-";
+      break;
   }
+  return text;
+  // if (props.detailInfo!.cooperateTime) {
+  //   switch (props.detailInfo!.cooperateTime) {
+  //     case CooperateTime.moreThanThreeMonths:
+  //       return "六个月";
+  //     case CooperateTime.ThreeMonths:
+  //       return "三个月";
+
+  //   }
+  // } else {
+  //   return "-";
+  // }
 });
 const serviceRange = computed(() => {
   if (props.detailInfo!.serviceRange) {

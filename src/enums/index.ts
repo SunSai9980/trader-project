@@ -17,7 +17,10 @@ export enum RiskType {
 }
 export enum CooperateTime {
   moreThanThreeMonths = 1,
-  lessThanThreeMonths,
+  ThreeMonths,
+  OneMonth,
+  LongCooperation,
+  Other,
 }
 export enum ServiceRange {
   LargeCityArea = 1,

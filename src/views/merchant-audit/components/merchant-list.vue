@@ -124,11 +124,7 @@
                 @click="$emit('goDetails', scope.row)"
                 >查看详情</el-button
               >
-              <el-button
-                v-if="!isChairman"
-                type="primary"
-                link
-                @click="handleEditBtn(scope.row)"
+              <el-button type="primary" link @click="handleEditBtn(scope.row)"
                 >编辑</el-button
               >
               <el-button
