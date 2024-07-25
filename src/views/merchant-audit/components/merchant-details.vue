@@ -567,7 +567,9 @@ const cooperateTime = computed(() => {
       text = "长期合作";
       break;
     case CooperateTime.Other:
-      text = "其他";
+      text = `其他${
+        props.detailInfo?.otherTime ? "，" + props.detailInfo?.otherTime : ""
+      }`;
       break;
     default:
       text = "-";

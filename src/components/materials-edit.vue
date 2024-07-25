@@ -305,6 +305,7 @@
             placeholder="请选择合作时间"
             size="large"
             style="width: 240px"
+            @change="cooperateTimeSelectChange()"
           >
             <el-option
               v-for="item in cooperateTimeOptions"
@@ -313,6 +314,21 @@
               :value="item.value"
             />
           </el-select>
+        </el-form-item>
+        <el-form-item
+          prop="otherTime"
+          label="自定义合作时间"
+          v-if="materialsForm.cooperateTime === CooperateTime.Other"
+        >
+          <el-input
+            v-model="materialsForm.otherTime"
+            style="width: 240px"
+            autosize
+            type="textarea"
+            show-word-limit
+            maxlength="100"
+            placeholder="请输入合作时间"
+          />
         </el-form-item>
         <el-form-item
           prop="companyProfile"
@@ -402,8 +418,7 @@ const serviceRangeOptions = [
 ];
 
 const cooperateTimeOptions = [
-
-    {
+  {
     label: "一个月",
     value: CooperateTime.OneMonth,
   },
@@ -473,6 +488,7 @@ const materialsForm = reactive<Materials>({
   serviceRange: props.user.serviceRange!,
   cooperateTime: props.user.cooperateTime!,
   companyProfile: props.user.companyProfile || "",
+  otherTime: props.user.otherTime || "",
 });
 
 const materialsRules = reactive<FormRules<Materials>>({
@@ -567,6 +583,12 @@ const materialsRules = reactive<FormRules<Materials>>({
       trigger: "blur",
     },
   ],
+  otherTime: [
+    {
+      required: true,
+      message: "请输入合作时间",
+    },
+  ],
   companyProfile: [
     {
       required: true,
@@ -575,6 +597,10 @@ const materialsRules = reactive<FormRules<Materials>>({
     },
   ],
 });
+
+const cooperateTimeSelectChange = () => {
+  materialsForm.otherTime = "";
+};
 
 const beforeUpload = (file: UploadFile) => {
   const fileName = file.name;

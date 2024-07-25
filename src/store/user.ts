@@ -34,6 +34,7 @@ export const useUserInfo = defineStore("userInfo", {
       cooperateTime: undefined,
       riskType: undefined,
       companyProfile: "",
+      otherTime: undefined,
     };
   },
   getters: {},

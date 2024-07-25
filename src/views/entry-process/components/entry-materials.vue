@@ -29,6 +29,7 @@ import { Materials, User } from "@/types";
 const emits = defineEmits(["stepNext"]);
 
 let user = useUserInfo();
+console.log(user);
 let invitationInfo = useInvitationInfo();
 
 const judgementRisk = (materialsForm: Materials) => {

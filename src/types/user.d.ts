@@ -47,6 +47,7 @@ export interface User {
   remark?: string;
   companyProfile?: string;
   uploadAgreement?: string;
+  otherTime?: string;
 }
 
 type Tuple = [
@@ -102,4 +103,5 @@ export interface Materials {
   riskType?: RiskType;
   companyProfile: string;
   cooperateType?: CooperateType;
+  otherTime: string;
 }
